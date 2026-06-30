@@ -55,10 +55,11 @@ class ScoringConfig:
     dense_lo_key: str = "p75"
     dense_hi_key: str = "p99"
     soft_and_eps: float = 0.05
-    nh_each: float = 0.12
-    nh_cap: float = 0.30
-    cm_clamp_lo: float = 0.85
-    cm_clamp_hi: float = 1.15
+    nh_each: float = 0.04
+    nh_cap: float = 0.10
+    cm_clamp_lo: float = 0.90
+    cm_clamp_hi: float = 1.08
+    dense_support_scale: float = 0.62   # dense rescues Tier-5s to ~Strong, never saturates fit
     engagement_slope: float = 0.6
     engagement_lo: float = 0.7
     engagement_hi: float = 1.1
@@ -187,7 +188,7 @@ def _concept_evidence(b: Bundle, cfg: ScoringConfig, bm25c: dict, dense_support:
         title = b.col(f"title_hit_{c}") if f"title_hit_{c}" in b.fidx else np.zeros(n)
         demonstrated = np.maximum(lex, 0.6 * title)
         if c in CORE_DENSE_CONCEPTS:
-            demonstrated = np.maximum(demonstrated, dense_support)
+            demonstrated = np.maximum(demonstrated, dense_support * cfg.dense_support_scale)
         skillmeta_present = b.col(f"skillmeta_{c}_max_duration_present") if f"skillmeta_{c}_max_duration_present" in b.fidx else np.zeros(n)
         declared = 0.4 * skillmeta_present
         wv, wd, wde = cfg.tier_weight_verified, cfg.tier_weight_demonstrated, cfg.tier_weight_declared

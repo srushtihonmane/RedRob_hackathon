@@ -1,0 +1,38 @@
+{
+  "peak_rss_mb": 601.9,
+  "stages": [
+    {
+      "rss_mb": 52.4,
+      "stage": "validate_and_bind",
+      "wall_s": 0.435
+    },
+    {
+      "rss_mb": 541.0,
+      "stage": "load_artifacts",
+      "wall_s": 0.621
+    },
+    {
+      "rss_mb": 584.0,
+      "stage": "score_pool",
+      "wall_s": 0.911
+    },
+    {
+      "rss_mb": 601.7,
+      "stage": "reason_and_select",
+      "wall_s": 0.123
+    },
+    {
+      "rss_mb": 601.9,
+      "stage": "write_csv",
+      "wall_s": 0.035
+    }
+  ],
+  "thread_settings": {
+    "MKL_NUM_THREADS": "1",
+    "NUMEXPR_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "OPENBLAS_NUM_THREADS": "1",
+    "VECLIB_MAXIMUM_THREADS": "1"
+  },
+  "total_wall_s": 2.137
+}

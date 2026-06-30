@@ -1,0 +1,948 @@
+{
+  "F": 132,
+  "antiprofile_label_order": [
+    "keyword_stuffer",
+    "research_only",
+    "cv_speech_robotics",
+    "consulting_only",
+    "recent_llm_only"
+  ],
+  "columns": [
+    {
+      "group": "G1_experience",
+      "index": 0,
+      "is_present_flag": false,
+      "name": "yoe",
+      "nullable": false
+    },
+    {
+      "group": "G1_experience",
+      "index": 1,
+      "is_present_flag": false,
+      "name": "summed_tenure_yrs",
+      "nullable": false
+    },
+    {
+      "group": "G1_experience",
+      "index": 2,
+      "is_present_flag": false,
+      "name": "n_roles",
+      "nullable": false
+    },
+    {
+      "group": "G1_experience",
+      "index": 3,
+      "is_present_flag": false,
+      "name": "current_role_tenure_mo",
+      "nullable": false
+    },
+    {
+      "group": "G1_experience",
+      "index": 4,
+      "is_present_flag": false,
+      "name": "longest_role_tenure_mo",
+      "nullable": false
+    },
+    {
+      "group": "G1_experience",
+      "index": 5,
+      "is_present_flag": false,
+      "name": "median_role_tenure_mo",
+      "nullable": false
+    },
+    {
+      "group": "G1_experience",
+      "index": 6,
+      "is_present_flag": false,
+      "name": "mean_role_tenure_mo",
+      "nullable": false
+    },
+    {
+      "group": "G2_jobhop",
+      "index": 7,
+      "is_present_flag": false,
+      "name": "count_stints_under_18mo",
+      "nullable": false
+    },
+    {
+      "group": "G2_jobhop",
+      "index": 8,
+      "is_present_flag": false,
+      "name": "frac_short_stints",
+      "nullable": false
+    },
+    {
+      "group": "G2_jobhop",
+      "index": 9,
+      "is_present_flag": false,
+      "name": "switches_per_year",
+      "nullable": false
+    },
+    {
+      "group": "G2_jobhop",
+      "index": 10,
+      "is_present_flag": false,
+      "name": "mean_tenure_at_exit",
+      "nullable": false
+    },
+    {
+      "group": "G3_company",
+      "index": 11,
+      "is_present_flag": false,
+      "name": "any_product_stint",
+      "nullable": false
+    },
+    {
+      "group": "G3_company",
+      "index": 12,
+      "is_present_flag": false,
+      "name": "frac_career_services",
+      "nullable": false
+    },
+    {
+      "group": "G3_company",
+      "index": 13,
+      "is_present_flag": false,
+      "name": "is_consulting_entire_career",
+      "nullable": false
+    },
+    {
+      "group": "G3_company",
+      "index": 14,
+      "is_present_flag": false,
+      "name": "product_tenure_yrs",
+      "nullable": false
+    },
+    {
+      "group": "G3_company",
+      "index": 15,
+      "is_present_flag": false,
+      "name": "max_company_size_at_product",
+      "nullable": false
+    },
+    {
+      "group": "G3_company",
+      "index": 16,
+      "is_present_flag": false,
+      "name": "largest_employer_fraction",
+      "nullable": false
+    },
+    {
+      "group": "G4_applied_ml",
+      "index": 17,
+      "is_present_flag": false,
+      "name": "kw_ml_role_tenure_yrs",
+      "nullable": false
+    },
+    {
+      "group": "G4_applied_ml",
+      "index": 18,
+      "is_present_flag": false,
+      "name": "ml_role_count",
+      "nullable": false
+    },
+    {
+      "group": "G6_education",
+      "index": 19,
+      "is_present_flag": false,
+      "name": "highest_tier_ordinal",
+      "nullable": false
+    },
+    {
+      "group": "G6_education",
+      "index": 20,
+      "is_present_flag": false,
+      "name": "has_tier1",
+      "nullable": false
+    },
+    {
+      "group": "G6_education",
+      "index": 21,
+      "is_present_flag": false,
+      "name": "highest_degree_level",
+      "nullable": false
+    },
+    {
+      "group": "G6_education",
+      "index": 22,
+      "is_present_flag": false,
+      "name": "has_phd",
+      "nullable": false
+    },
+    {
+      "group": "G6_education",
+      "index": 23,
+      "is_present_flag": false,
+      "name": "field_relevance",
+      "nullable": false
+    },
+    {
+      "group": "G6_education",
+      "index": 24,
+      "is_present_flag": false,
+      "name": "latest_grad_year",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 25,
+      "is_present_flag": true,
+      "name": "latest_grad_year_present",
+      "nullable": false
+    },
+    {
+      "group": "G7_consistency",
+      "index": 26,
+      "is_present_flag": false,
+      "name": "yoe_minus_summed_tenure",
+      "nullable": false
+    },
+    {
+      "group": "G7_consistency",
+      "index": 27,
+      "is_present_flag": false,
+      "name": "expert_skill_zero_duration_count",
+      "nullable": false
+    },
+    {
+      "group": "G7_consistency",
+      "index": 28,
+      "is_present_flag": false,
+      "name": "skill_duration_exceeds_career_flag",
+      "nullable": false
+    },
+    {
+      "group": "G7_consistency",
+      "index": 29,
+      "is_present_flag": false,
+      "name": "timeline_overlap_months",
+      "nullable": false
+    },
+    {
+      "group": "G7_consistency",
+      "index": 30,
+      "is_present_flag": false,
+      "name": "gradyear_vs_yoe_gap",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 31,
+      "is_present_flag": true,
+      "name": "gradyear_vs_yoe_gap_present",
+      "nullable": false
+    },
+    {
+      "group": "G8_location",
+      "index": 32,
+      "is_present_flag": false,
+      "name": "is_noida_pune",
+      "nullable": false
+    },
+    {
+      "group": "G8_location",
+      "index": 33,
+      "is_present_flag": false,
+      "name": "is_tier1_indian_city",
+      "nullable": false
+    },
+    {
+      "group": "G8_location",
+      "index": 34,
+      "is_present_flag": false,
+      "name": "is_india",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 35,
+      "is_present_flag": false,
+      "name": "sig_profile_completeness_score",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 36,
+      "is_present_flag": false,
+      "name": "sig_profile_views_received_30d",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 37,
+      "is_present_flag": false,
+      "name": "sig_applications_submitted_30d",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 38,
+      "is_present_flag": false,
+      "name": "sig_recruiter_response_rate",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 39,
+      "is_present_flag": false,
+      "name": "sig_avg_response_time_hours",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 40,
+      "is_present_flag": false,
+      "name": "sig_connection_count",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 41,
+      "is_present_flag": false,
+      "name": "sig_endorsements_received",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 42,
+      "is_present_flag": false,
+      "name": "sig_notice_period_days",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 43,
+      "is_present_flag": false,
+      "name": "sig_search_appearance_30d",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 44,
+      "is_present_flag": false,
+      "name": "sig_saved_by_recruiters_30d",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 45,
+      "is_present_flag": false,
+      "name": "sig_interview_completion_rate",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 46,
+      "is_present_flag": false,
+      "name": "sig_github_activity_score",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 47,
+      "is_present_flag": true,
+      "name": "sig_github_activity_score_present",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 48,
+      "is_present_flag": false,
+      "name": "sig_offer_acceptance_rate",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 49,
+      "is_present_flag": true,
+      "name": "sig_offer_acceptance_rate_present",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 50,
+      "is_present_flag": false,
+      "name": "sig_open_to_work_flag",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 51,
+      "is_present_flag": false,
+      "name": "sig_willing_to_relocate",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 52,
+      "is_present_flag": false,
+      "name": "sig_verified_email",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 53,
+      "is_present_flag": false,
+      "name": "sig_verified_phone",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 54,
+      "is_present_flag": false,
+      "name": "sig_linkedin_connected",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 55,
+      "is_present_flag": false,
+      "name": "sig_work_mode_remote",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 56,
+      "is_present_flag": false,
+      "name": "sig_work_mode_hybrid",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 57,
+      "is_present_flag": false,
+      "name": "sig_work_mode_onsite",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 58,
+      "is_present_flag": false,
+      "name": "sig_work_mode_flexible",
+      "nullable": false
+    },
+    {
+      "group": "present_flag",
+      "index": 59,
+      "is_present_flag": true,
+      "name": "sig_salary_present",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 60,
+      "is_present_flag": false,
+      "name": "sig_salary_min",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 61,
+      "is_present_flag": true,
+      "name": "sig_salary_min_present",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 62,
+      "is_present_flag": false,
+      "name": "sig_salary_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 63,
+      "is_present_flag": true,
+      "name": "sig_salary_max_present",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 64,
+      "is_present_flag": false,
+      "name": "sig_salary_mid",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 65,
+      "is_present_flag": true,
+      "name": "sig_salary_mid_present",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 66,
+      "is_present_flag": false,
+      "name": "sig_last_active_recency_days",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 67,
+      "is_present_flag": true,
+      "name": "sig_last_active_recency_days_present",
+      "nullable": false
+    },
+    {
+      "group": "signals",
+      "index": 68,
+      "is_present_flag": false,
+      "name": "sig_account_tenure_days",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 69,
+      "is_present_flag": true,
+      "name": "sig_account_tenure_days_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 70,
+      "is_present_flag": false,
+      "name": "assess_retrieval_embeddings_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 71,
+      "is_present_flag": true,
+      "name": "assess_retrieval_embeddings_max_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 72,
+      "is_present_flag": false,
+      "name": "skillmeta_retrieval_embeddings_max_duration",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 73,
+      "is_present_flag": true,
+      "name": "skillmeta_retrieval_embeddings_max_duration_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 74,
+      "is_present_flag": false,
+      "name": "title_hit_retrieval_embeddings",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 75,
+      "is_present_flag": false,
+      "name": "assess_vector_db_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 76,
+      "is_present_flag": true,
+      "name": "assess_vector_db_max_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 77,
+      "is_present_flag": false,
+      "name": "skillmeta_vector_db_max_duration",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 78,
+      "is_present_flag": true,
+      "name": "skillmeta_vector_db_max_duration_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 79,
+      "is_present_flag": false,
+      "name": "title_hit_vector_db",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 80,
+      "is_present_flag": false,
+      "name": "assess_ranking_eval_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 81,
+      "is_present_flag": true,
+      "name": "assess_ranking_eval_max_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 82,
+      "is_present_flag": false,
+      "name": "skillmeta_ranking_eval_max_duration",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 83,
+      "is_present_flag": true,
+      "name": "skillmeta_ranking_eval_max_duration_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 84,
+      "is_present_flag": false,
+      "name": "title_hit_ranking_eval",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 85,
+      "is_present_flag": false,
+      "name": "assess_learning_to_rank_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 86,
+      "is_present_flag": true,
+      "name": "assess_learning_to_rank_max_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 87,
+      "is_present_flag": false,
+      "name": "skillmeta_learning_to_rank_max_duration",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 88,
+      "is_present_flag": true,
+      "name": "skillmeta_learning_to_rank_max_duration_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 89,
+      "is_present_flag": false,
+      "name": "title_hit_learning_to_rank",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 90,
+      "is_present_flag": false,
+      "name": "assess_strong_python_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 91,
+      "is_present_flag": true,
+      "name": "assess_strong_python_max_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 92,
+      "is_present_flag": false,
+      "name": "skillmeta_strong_python_max_duration",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 93,
+      "is_present_flag": true,
+      "name": "skillmeta_strong_python_max_duration_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 94,
+      "is_present_flag": false,
+      "name": "title_hit_strong_python",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 95,
+      "is_present_flag": false,
+      "name": "assess_llm_finetune_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 96,
+      "is_present_flag": true,
+      "name": "assess_llm_finetune_max_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 97,
+      "is_present_flag": false,
+      "name": "skillmeta_llm_finetune_max_duration",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 98,
+      "is_present_flag": true,
+      "name": "skillmeta_llm_finetune_max_duration_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 99,
+      "is_present_flag": false,
+      "name": "title_hit_llm_finetune",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 100,
+      "is_present_flag": false,
+      "name": "assess_distributed_systems_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 101,
+      "is_present_flag": true,
+      "name": "assess_distributed_systems_max_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 102,
+      "is_present_flag": false,
+      "name": "skillmeta_distributed_systems_max_duration",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 103,
+      "is_present_flag": true,
+      "name": "skillmeta_distributed_systems_max_duration_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 104,
+      "is_present_flag": false,
+      "name": "title_hit_distributed_systems",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 105,
+      "is_present_flag": false,
+      "name": "assess_cv_speech_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 106,
+      "is_present_flag": true,
+      "name": "assess_cv_speech_max_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 107,
+      "is_present_flag": false,
+      "name": "skillmeta_cv_speech_max_duration",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 108,
+      "is_present_flag": true,
+      "name": "skillmeta_cv_speech_max_duration_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 109,
+      "is_present_flag": false,
+      "name": "title_hit_cv_speech",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 110,
+      "is_present_flag": false,
+      "name": "assess_nlp_ir_max",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 111,
+      "is_present_flag": true,
+      "name": "assess_nlp_ir_max_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 112,
+      "is_present_flag": false,
+      "name": "skillmeta_nlp_ir_max_duration",
+      "nullable": true
+    },
+    {
+      "group": "present_flag",
+      "index": 113,
+      "is_present_flag": true,
+      "name": "skillmeta_nlp_ir_max_duration_present",
+      "nullable": false
+    },
+    {
+      "group": "corroboration",
+      "index": 114,
+      "is_present_flag": false,
+      "name": "title_hit_nlp_ir",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 115,
+      "is_present_flag": false,
+      "name": "identity_cos_ideal",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 116,
+      "is_present_flag": false,
+      "name": "evidence_cos_ideal",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 117,
+      "is_present_flag": false,
+      "name": "identity_cos_keyword_stuffer",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 118,
+      "is_present_flag": false,
+      "name": "evidence_cos_keyword_stuffer",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 119,
+      "is_present_flag": false,
+      "name": "identity_cos_research_only",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 120,
+      "is_present_flag": false,
+      "name": "evidence_cos_research_only",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 121,
+      "is_present_flag": false,
+      "name": "identity_cos_cv_speech_robotics",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 122,
+      "is_present_flag": false,
+      "name": "evidence_cos_cv_speech_robotics",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 123,
+      "is_present_flag": false,
+      "name": "identity_cos_consulting_only",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 124,
+      "is_present_flag": false,
+      "name": "evidence_cos_consulting_only",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 125,
+      "is_present_flag": false,
+      "name": "identity_cos_recent_llm_only",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 126,
+      "is_present_flag": false,
+      "name": "evidence_cos_recent_llm_only",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 127,
+      "is_present_flag": false,
+      "name": "max_role_relevance",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 128,
+      "is_present_flag": false,
+      "name": "mean_role_relevance",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 129,
+      "is_present_flag": false,
+      "name": "recent_role_relevance",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 130,
+      "is_present_flag": false,
+      "name": "cv_speech_vs_nlp_lean",
+      "nullable": false
+    },
+    {
+      "group": "G5_G9_G10_embedding",
+      "index": 131,
+      "is_present_flag": false,
+      "name": "identity_evidence_divergence",
+      "nullable": false
+    }
+  ],
+  "company_table_sha256": "3ef47c82bb5301664ee6ee562b57bb753d286679df16a4a656fbcf95c444345b",
+  "concept_registry_sha256": "eb0b61ee7f0e64bcda4acc7281f72bc8cf19d1859dd2b85f6ea8640c24245643",
+  "model": {
+    "dim": 384,
+    "name": "BAAI/bge-small-en-v1.5",
+    "normalize": "L2",
+    "passage_prefix": "",
+    "query_prefix": "Represent this sentence for searching relevant passages: "
+  },
+  "n_rows": 100000,
+  "ref_date": "2026-05-28",
+  "schema_version": 1
+}
