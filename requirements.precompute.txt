@@ -1,0 +1,19 @@
+# Precompute + Sandbox dependency set (UNBUDGETED offline phase).
+# May carry neural-model / embedding deps. Pinned for reproducibility. Python 3.10.
+# Includes the lean runtime set so precompute can also load/verify runtime artifacts.
+numpy==2.2.6
+scipy==1.15.3
+pyarrow==22.0.0
+pandas==2.3.3
+joblib==1.5.1
+PyYAML==6.0.3
+
+# Embedding backend for bge-small-en-v1.5 (384-d, L2-norm, query/passage prefix).
+# Backend selected in src/embed.py: a lean ONNX path (fastembed) is preferred for low
+# memory; sentence-transformers+torch is the fallback. The chosen library + exact version
+# is pinned here once verified to install and reproduce the prefix convention.
+# (Finalized during Goal 2/3 build — see claude-progress.txt.)
+# fastembed==<pinned>
+# --- OR ---
+# sentence-transformers==<pinned>
+# torch==2.9.1

@@ -1,0 +1,44 @@
+REDROB RANKING — BUILD PROGRESS
+================================
+(Update every session. DONE / NEXT / KEY DECISIONS / RISKS / DEVIATIONS.)
+
+CURRENT STATE: PHASE 0 in progress (initializer).
+
+DONE
+- Read full spec: Architecture/ (overview, contracts, runtime, artifacts, Goal1-8),
+  submission_spec.docx, job_description.docx, candidate_schema.json, validate_submission.py.
+- Verified environment (see RISKS).
+- Scaffolding: dirs (src/ tests/ artifacts/ data/sample/ scripts/), feature_list.json (~45
+  features), .gitignore, requirements.runtime.txt (pinned lean), requirements.precompute.txt,
+  this file.
+
+NEXT (PHASE 0 finish, then PHASE 1)
+1. init.sh smoke test + git init + initial commit.
+2. tests/ harness EARLY (trap fixtures, invariant asserts, budget check) — source of truth.
+3. src/common.py (determinism setup, REF_DATE handling, stable hashing, schema constants).
+4. Goal 1 ingest (parse_record + streaming parquet writer + candidate_ids + manifest).
+5. make_sample.py -> stratified 1-2k sample (incl. honeypots/stuffers/Tier-5/consulting/cv-speech).
+6. Stand up the thin precompute->rank->validate skeleton ASAP; deepen Goal-by-Goal (2->8),
+   then Goal 4 D9 audit/tuning. Validate on the sample throughout; defer full 100k embed.
+
+KEY DECISIONS
+- python (not python3). Build/validate on a 1-2k representative sample; full 100k embed
+  deferred to the end (resumable background job) — per user direction.
+- Precompute is streaming + memmap + small-batch + CHECKPOINTED/RESUMABLE (RAM-tight machine).
+- Embedding stack: prefer lean ONNX (fastembed) for bge-small-en-v1.5; fallback
+  sentence-transformers+torch. Same lib both sides (JD + candidates). Pin once verified.
+- Competition Runtime deps: numpy/scipy/pyarrow/pandas/joblib only. rank.py loads NO neural model.
+- Tie-break: printed = final_score - rank*delta; ONLY equal-printed-score tie-break =
+  candidate_id ascending (validate_submission.py ground truth). Never a post-score reorder.
+- Sandbox §10.5: docker run recipe (untestable locally — no Docker) + a testable
+  sandbox_rank.py on <=100 sample.
+
+RISKS
+- RAM ~2 GB free of 16 GB (host 87% used). Ranking step fine (~1.3 GB). Offline embed is the
+  pressure point -> frugal+checkpointed; full run deferred.
+- No transformers/sentence-transformers/fastembed installed; no bge cached. Precompute needs a
+  one-time network fetch (allowed; no-network binds only the ranking step). Verify network at build.
+- No Docker locally -> Dockerfile shipped but unverified here; sandbox_rank.py is the tested path.
+
+DEVIATIONS FROM PLAN (log each with one-line rationale)
+- (none yet)

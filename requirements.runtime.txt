@@ -1,0 +1,8 @@
+# Competition Runtime (the budgeted ranking step) — lean, CPU-only, offline, deterministic.
+# No neural-model / inference-engine dependency. Pinned for reproducibility.
+# Python 3.10
+numpy==2.2.6
+scipy==1.15.3
+pyarrow==22.0.0
+pandas==2.3.3
+joblib==1.5.1

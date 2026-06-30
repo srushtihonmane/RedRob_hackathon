@@ -1,0 +1,8 @@
+# Enforce LF for text/code so hashing and CSV output stay deterministic across platforms.
+* text=auto eol=lf
+*.png binary
+*.npy binary
+*.npz binary
+*.parquet binary
+*.docx binary
+*.csv text eol=lf
