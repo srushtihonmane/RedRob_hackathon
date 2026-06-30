@@ -89,13 +89,12 @@ def build_index(records, out_dir: str, jd_query_path: str = "jd/jd_query.json",
     idf = np.log(1.0 + (n_docs - df + 0.5) / (df + 0.5)).astype(np.float32)
 
     # Precompute BM25 weight matrix W[d,t] = idf_t * tf*(k1+1) / (tf + k1*(1-b+b*dl_d/avgdl)).
+    # Vectorized over CSR.data (no per-nnz Python loop) — memory-frugal + fast for ~8M nnz.
     denom_doc = (k1 * (1 - b + b * (doclen_arr / (avgdl or 1.0)))).astype(np.float32)
-    W = tf.tocoo()
-    w_data = np.empty_like(W.data, dtype=np.float32)
-    for i in range(W.data.shape[0]):
-        t = W.data[i]
-        w_data[i] = idf[W.col[i]] * (t * (k1 + 1.0)) / (t + denom_doc[W.row[i]])
-    Wm = sp.csr_matrix((w_data, (W.row, W.col)), shape=tf.shape)
+    rows_of_nnz = np.repeat(np.arange(n_docs, dtype=np.int64), np.diff(tf.indptr))
+    t = tf.data
+    w_data = (idf[tf.indices] * (t * (k1 + 1.0)) / (t + denom_doc[rows_of_nnz])).astype(np.float32)
+    Wm = sp.csr_matrix((w_data, tf.indices.copy(), tf.indptr.copy()), shape=tf.shape)
 
     out = Path(out_dir) / "bm25_index"
     out.mkdir(parents=True, exist_ok=True)

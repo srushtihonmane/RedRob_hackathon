@@ -1,6 +1,6 @@
 {
   "candidate_ids_sha256": "2634f6405e836edc9b7385e7e186ab52f8b935a4492ba601e0eb7c167b42c303",
-  "git_commit": "042ab3d80db086c0f7feab57e18232be2f1bf0c8",
+  "git_commit": "b5f2d5e08a8e1fa980fb67d18fea7f15c1e5a854",
   "lib_versions": {
     "numpy": "2.2.6",
     "pyarrow": "22.0.0"
