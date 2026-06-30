@@ -83,20 +83,26 @@ def build_reasoner(bundle, res, cfg):
                          c=raw.get("current_company", ""))
         if a:
             eids.append(a["evidence_id"])
-        # strengths with JD link + citation
-        clauses = []
+        # strengths with JD link + citation (dedupe identical clauses / repeated snippets)
+        clauses, seen_clause, seen_eid = [], set(), set()
         for st in ir["strengths"]:
             snip = st["snip"]
             if snip and snip["source_tier"] == "verified" and "raw" in snip:
                 score = snip["raw"].get("score")
                 score_s = f"{round(float(score))}" if score is not None else ""
-                clauses.append(f"{snip['raw'].get('skill','')} assessment {score_s}".strip())
-                eids.append(snip["evidence_id"])
+                clause = f"{snip['raw'].get('skill','')} assessment {score_s}".strip()
+                eid = snip["evidence_id"]
             elif snip and snip["source_tier"] == "demonstrated":
-                clauses.append(f"{st['jd']} ({raw.get('current_company','')})")
-                eids.append(snip["evidence_id"])
+                clause = f"{st['jd']} ({raw.get('current_company','')})"
+                eid = snip["evidence_id"]
             else:
-                clauses.append(f"{st['jd']}")
+                clause, eid = st["jd"], None
+            if clause in seen_clause or (eid and eid in seen_eid):
+                continue
+            seen_clause.add(clause)
+            if eid:
+                seen_eid.add(eid); eids.append(eid)
+            clauses.append(clause)
         if clauses:
             s1 = s1 + " — " + "; ".join(clauses[:2])
         # tone + concern (S2)

@@ -35,6 +35,15 @@ Thumbs.db
 # Generated submission output
 /submission.csv
 /selection_manifest.json
+/reasoning_provenance.json
+/reasoning_audit_report.json
+/ranked.csv
+/*_sub.csv
+/sub*.csv
+/x.csv
+data/sample/tiny*.jsonl
+data/sample/sample100.jsonl
+data/sample/tiny_art/
 
 # Runtime scratch
 *.tmp

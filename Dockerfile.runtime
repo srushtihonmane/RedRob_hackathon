@@ -1,0 +1,25 @@
+# Competition Runtime image = the Stage-3 reproduction environment.
+# Lean, CPU-only, offline. Reproduces the BUDGETED ranking step from precomputed artifacts.
+# (Precompute its artifacts first with requirements.precompute.txt, or ship ./artifacts.)
+FROM python:3.10-slim
+
+# Determinism: single-thread BLAS (the canonical reproduction image, Goal 8 D6).
+ENV OMP_NUM_THREADS=1 \
+    OPENBLAS_NUM_THREADS=1 \
+    MKL_NUM_THREADS=1 \
+    NUMEXPR_NUM_THREADS=1 \
+    PYTHONHASHSEED=0
+
+WORKDIR /work
+COPY requirements.runtime.txt .
+RUN pip install --no-cache-dir -r requirements.runtime.txt
+
+COPY src ./src
+COPY jd ./jd
+COPY reference ./reference
+COPY rank.py validate_submission.py ./
+
+# Expects ./artifacts (precomputed) and ./candidates.jsonl mounted at runtime, e.g.:
+#   docker run --rm -v "$PWD:/work" -w /work redrob-ranker \
+#       python rank.py --candidates ./candidates.jsonl --out ./submission.csv
+CMD ["python", "rank.py", "--candidates", "./candidates.jsonl", "--out", "./submission.csv"]

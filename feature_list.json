@@ -498,7 +498,7 @@
         "run both on sample",
         "assert rank.py is the single CSV-producing command"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8.2",
@@ -509,7 +509,7 @@
         "measure wall-clock + peak RSS",
         "assert within budget on sample and (deferred) full pool"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8.3",
@@ -519,7 +519,7 @@
       "steps": [
         "static + import check that no torch/transformers/onnx model is loaded at runtime"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8.4",
@@ -530,7 +530,7 @@
         "corrupt an artifact hash",
         "assert loud fail before matrix load"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8.5",
@@ -541,7 +541,7 @@
         "emit root manifest",
         "assert it references every sub-manifest by path"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8.6",
@@ -552,7 +552,7 @@
         "run rank.py twice",
         "assert identical output hash"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8.7",
@@ -563,7 +563,7 @@
         "emit report",
         "assert per-stage fields"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8.8",
@@ -575,7 +575,7 @@
         "assert frozen stats applied, not recomputed",
         "assert <=5 min CPU"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F8.9",
@@ -586,7 +586,7 @@
         "assert files present",
         "assert README has the exact reproduce command"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FT.1",

@@ -2,7 +2,12 @@ REDROB RANKING — BUILD PROGRESS
 ================================
 (Update every session. DONE / NEXT / KEY DECISIONS / RISKS / DEVIATIONS.)
 
-CURRENT STATE: PHASE 1. Goals 1-6 DONE. END-TO-END SUBMISSION VALID on sample
+CURRENT STATE: PHASE 1. ALL 8 GOALS DONE. 57/57 features pass; 84 tests green on sample.
+rank.py: 0.13s/62MB, byte-identical, no neural model. Two-command repro proven (precompute
+-> rank -> valid CSV). Sandbox + packaging done. REMAINING: (a) embedding-throughput fix +
+checkpoint/resume, then the deferred FULL 100k precompute run; (b) optional D9 tuning.
+
+(historical) Goals 1-6 DONE. END-TO-END SUBMISSION VALID on sample
 (validate_submission.py: "Submission is valid."). Next: Goal 7 reasoning (replace placeholder),
 then Goal 8 runtime/repro/packaging, then D9 tuning + full 100k run.
 

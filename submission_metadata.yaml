@@ -1,0 +1,68 @@
+# Redrob Hackathon — Submission Metadata
+# Fill the TODO personal fields before uploading; everything else reflects this repo.
+
+team_name: "TODO-your-team-name"
+
+primary_contact:
+  name: "TODO Full Name"
+  email: "24B2447@iitb.ac.in"
+  phone: "TODO +91-XXXXXXXXXX"
+
+team_members:
+  - name: "TODO Member 1"
+    email: "24B2447@iitb.ac.in"
+    role: "ML Engineer"
+
+# ============================================================================
+# Code and reproducibility
+# ============================================================================
+github_repo: "TODO https://github.com/YOUR_USERNAME/YOUR_REPO"
+sandbox_link: "TODO hosted sandbox URL — or use the docker run recipe in README.md"
+reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
+
+compute:
+  platform: "Local Windows box"
+  cpu_cores: 8
+  ram_gb: 16
+  python_version: "3.10.0"
+  os: "Windows 11"
+  uses_gpu_for_inference: false
+  has_network_during_ranking: false
+  pre_computation_required: true
+  pre_computation_time_minutes: 120   # full-pool embedding (one-time); ranking step is ~seconds
+
+# ============================================================================
+# AI tools declaration (transparency only; not penalized)
+# ============================================================================
+ai_tools_used:
+  - "Claude"
+
+ai_usage_summary: |
+  Claude (Claude Code) was used as a pair-engineer for implementation, test authoring, and
+  code review against a human-authored architecture spec (the Architecture/ folder). No
+  candidate data was sent to any hosted LLM. The ranking step calls no LLM/network at all.
+
+# ============================================================================
+# Approach summary
+# ============================================================================
+methodology_summary: |
+  Two-phase system mirroring the JD's "v2". OFFLINE precompute builds bge-small-en-v1.5
+  embeddings (identity + query-aware evidence docs), a narrative-only BM25 index (skills[]
+  excluded), 132 raw structured features + 23 behavioral signals, per-concept corroboration
+  channels, and risk flags. The BUDGETED ranking step is a frozen scorer: recall-first union
+  retrieval, then a corroboration-FIRST relevance engine — each JD must-have is satisfied via a
+  trust-tiered noisy-OR (Verified assessment / Demonstrated career+dense / Declared) gated by a
+  soft corroboration requirement, combined with a weighted geometric-mean soft-AND so no single
+  channel (e.g. a high dense cosine or a keyword list) can inflate fit. Bounded, separable
+  engagement and risk multipliers down-weight inactive or archetype-resembling profiles.
+  Honeypots are excluded by three disjoint logical-impossibility rules; consulting-entire-career
+  is gated with a product-stint override. Reasoning is a deterministic projection of the evidence
+  trail (cites only assessments/career spans/signals — never the diluted skills[] array). Fully
+  deterministic, CPU-only, no network; ranking step ~seconds on 16 GB.
+
+declarations:
+  read_submission_spec: true
+  code_is_original_work: true
+  no_collusion: true
+  honeypot_check_done: true
+  reproduction_tested: true
