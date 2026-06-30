@@ -2,70 +2,635 @@
   "schema_version": 1,
   "notes": "Source of truth for build progress. Each feature is end-to-end-testable against real data and the real validators. Flip passes:true ONLY after it genuinely passes; never weaken a test to pass. Validated on the 1-2k sample throughout; the full 100k run is deferred to the end.",
   "features": [
-    {"id": "F1.1", "goal": 1, "category": "functional", "description": "parse_record(raw)->canonical struct: pure, reusable (Sandbox parity), separate from the writer", "steps": ["parse a sample record", "assert all schema fields present and typed", "assert pure (no pool-level state)"], "passes": false},
-    {"id": "F1.2", "goal": 1, "category": "artifact", "description": "candidates.parquet nested list<struct>+map table, source row order, lossless round-trip", "steps": ["stream-write sample to parquet", "reload and compare to source JSON for byte/semantic equality", "assert row i == i-th source line"], "passes": false},
-    {"id": "F1.3", "goal": 1, "category": "artifact", "description": "candidate_ids.npy int32 [N], 7-digit part, authoritative alignment key", "steps": ["emit candidate_ids.npy", "assert dtype int32 and length N", "assert matches parquet ids in order"], "passes": false},
-    {"id": "F1.4", "goal": 1, "category": "constraint", "description": "streaming write is memory-frugal (one RecordBatch resident), ~5-10k/batch, Zstd, pinned Arrow schema", "steps": ["measure peak RSS over sample ingest", "assert bounded (no full-table materialization)"], "passes": false},
-    {"id": "F1.5", "goal": 1, "category": "constraint", "description": "integrity: exactly-N rows, candidate_id unique and ^CAND_[0-9]{7}$, quarantine-not-drop policy", "steps": ["run integrity asserts on sample", "inject a malformed line and assert quarantine+count, not crash"], "passes": false},
-    {"id": "F1.6", "goal": 1, "category": "artifact", "description": "ingest_manifest.json (rows, quarantine, source+output sha256, schema fp, versions, git, timestamp)", "steps": ["emit manifest", "assert all fields present and hashes match files"], "passes": false},
-
-    {"id": "F2.1", "goal": 2, "category": "artifact", "description": "jd_query.json typed-criteria catalog + lexical groups+synonyms + ideal narrative + anti-profile narratives+ordered labels + divergence decl", "steps": ["author from job_description.docx", "assert 5 must-haves, nice-to-haves, disqualifiers incl consulting hard gate, modifiers, atomic engagement signals"], "passes": false},
-    {"id": "F2.2", "goal": 2, "category": "artifact", "description": "jd_ideal.npy [1x384] f32 L2-norm via query prefix", "steps": ["embed ideal narrative", "assert shape and unit norm"], "passes": false},
-    {"id": "F2.3", "goal": 2, "category": "artifact", "description": "jd_antiprofile.npy [Ax384] f32 L2-norm, row order == declared label order", "steps": ["embed each archetype narrative", "assert row order matches jd_query labels"], "passes": false},
-    {"id": "F2.4", "goal": 2, "category": "functional", "description": "build-time validation: schema well-formed, every evidence_sources path exists in candidate_schema.json, unique ids, valid enums", "steps": ["run validator", "assert every evidence path resolves in candidate_schema.json"], "passes": false},
-    {"id": "F2.5", "goal": 2, "category": "artifact", "description": "jd_manifest.json (sha256 each file, model+revision, dim, normalize, prefix, git, timestamp)", "steps": ["emit manifest", "assert fields + hashes"], "passes": false},
-
-    {"id": "F3.1", "goal": 3, "category": "functional", "description": "builder(candidate, frozen_inputs) reusable per-candidate derivation (REF_DATE, jd vectors, company_table, concept_registry, model frozen)", "steps": ["run builder on sample candidate", "assert pool-independent given frozen inputs (skips REF_DATE pre-scan)"], "passes": false},
-    {"id": "F3.2", "goal": 3, "category": "artifact", "description": "embeddings_identity.npy + embeddings_evidence.npy [Nx384] f32 L2-norm, passage prefix, query-aware evidence-doc assembly", "steps": ["build both for sample", "assert shapes, unit norm, deterministic assembly order"], "passes": false},
-    {"id": "F3.3", "goal": 3, "category": "artifact", "description": "features.npy [NxF] raw + features.parquet + feature_manifest.json (G1-G10 + 23 signals + corroboration channels)", "steps": ["build features for sample", "assert F matches manifest and all groups present"], "passes": false},
-    {"id": "F3.4", "goal": 3, "category": "constraint", "description": "NaN+_present invariant: _present==0 <=> value is NaN; no sentinels, no imputation", "steps": ["assert NaN pattern matches present flags across all nullable cols"], "passes": false},
-    {"id": "F3.5", "goal": 3, "category": "artifact", "description": "bm25_index/ CSR npz + idf.npy + doclen.npy + vocab.json; narrative-only corpus (skills[] excluded); controlled phrase-joining", "steps": ["build index for sample", "assert skills-array tokens absent", "assert phrase tokens preserved"], "passes": false},
-    {"id": "F3.6", "goal": 3, "category": "artifact", "description": "normalization_stats.json per-feature full-pool percentiles {count,missing,min,max,mean,std,p1..p99}", "steps": ["emit stats", "assert per-feature percentile fields present"], "passes": false},
-    {"id": "F3.7", "goal": 3, "category": "artifact", "description": "evidence_snippets row-addressable sidecar (offsets+blob) with stable evidence_id; O(100) random access", "steps": ["build sidecar", "materialize 100 random rows without full load", "assert stable evidence_ids"], "passes": false},
-    {"id": "F3.8", "goal": 3, "category": "constraint", "description": "REF_DATE = max(last_active_date in pool)+1 day, frozen in manifest, never today()/build-time", "steps": ["compute REF_DATE pass-1", "assert frozen in manifest and used pool-wide"], "passes": false},
-    {"id": "F3.9", "goal": 3, "category": "constraint", "description": "alignment: row i aligns across both embeddings, features, candidate_ids, parquet; repr_manifest.json + loud-fail assertion", "steps": ["run alignment assert", "assert candidate_ids match Goal 1 and length N"], "passes": false},
-
-    {"id": "F4.1", "goal": 4, "category": "functional", "description": "4A retrieval: recall-first union shortlist (dense_evidence U dense_identity U BM25 U structural_prefilter), membership only", "steps": ["build shortlist", "assert every planted Tier-5 fixture is included"], "passes": false},
-    {"id": "F4.2", "goal": 4, "category": "functional", "description": "4B criterion eval: per-criterion satisfaction + evidence trail via trust-tiered noisy-OR x soft corroboration gate; feature transforms on frozen stats", "steps": ["evaluate fixtures", "assert stuffer(Tier-3 only)->~floor, Tier-5(Tier-2)->satisfied"], "passes": false},
-    {"id": "F4.3", "goal": 4, "category": "functional", "description": "4C fusion: structured = MH_softAND x (1+NH_bonus) x CM_modifier (criterion-satisfaction spine)", "steps": ["fuse fixtures", "assert high dense cosine alone cannot inflate fit"], "passes": false},
-    {"id": "F4.4", "goal": 4, "category": "functional", "description": "4D calibration: tail-anchored calibrated fit_score + fit_tier {Elite,Strong,Plausible,Filler}", "steps": ["calibrate against pool stats", "assert irrelevant median maps near 0 not 0.5"], "passes": false},
-    {"id": "F4.5", "goal": 4, "category": "functional", "description": "4E modifiers: engagement_modifier in [0.7,1.1] + risk_modifier in [0.5,1.0], bounded, applied in Goal 6", "steps": ["compute modifiers", "assert low-fit x high-engagement stays low (HR-Manager trap)"], "passes": false},
-    {"id": "F4.6", "goal": 4, "category": "artifact", "description": "fit bundle (contracts C7): fit_score, subscores, per-criterion satisfaction+fit_contribution, evidence trail (evidence_id/source_tier/jd_label), fit_tier, corroboration-breadth count", "steps": ["emit bundle for shortlist", "assert all C7 fields present"], "passes": false},
-    {"id": "F4.7", "goal": 4, "category": "artifact", "description": "pool distribution stats (BM25/dense_identity/dense_evidence[/CE]) emitted offline for shortlist-independent calibration", "steps": ["emit pool stats", "assert reproducible calibration uses them"], "passes": false},
-
-    {"id": "F5.1", "goal": 5, "category": "functional", "description": "risk_flags(features) reusable; H1 yoe-tenure>2, H2 tenure-yoe>2, H3 >=2 expert/adv skills with duration 0; OR-fired", "steps": ["run on fixtures", "assert OR firing and per-rule evidence persisted"], "passes": false},
-    {"id": "F5.2", "goal": 5, "category": "trap", "description": "honeypot detection invariants: rule=>condition; no candidate in the empty (0.5,2.0] yoe-tenure gap", "steps": ["assert H1=>yoe-tenure>2 etc", "assert empty-gap property on sample"], "passes": false},
-    {"id": "F5.3", "goal": 5, "category": "functional", "description": "consulting_entire_career hard gate + any_product_stint override + suppression_evidence", "steps": ["fire gate on all-consulting fixture", "assert override on product-stint fixture with suppression_evidence"], "passes": false},
-    {"id": "F5.4", "goal": 5, "category": "functional", "description": "stuffer_suspect_flag diagnostic (runtime; high lexical-dense divergence + zero Tier-1/2 + title/domain mismatch), audit-only never excludes", "steps": ["flag stuffer fixture", "assert never used for exclusion"], "passes": false},
-    {"id": "F5.5", "goal": 5, "category": "artifact", "description": "risk_flags artifact aligned by row order + risk_manifest.json", "steps": ["emit artifact", "assert alignment + manifest fields"], "passes": false},
-
-    {"id": "F6.1", "goal": 6, "category": "functional", "description": "eligibility: hard_gate_flag = honeypot OR (consulting AND NOT suppressed), derived not persisted; score everyone, select eligible", "steps": ["derive eligibility", "assert selection restricted to eligible subset"], "passes": false},
-    {"id": "F6.2", "goal": 6, "category": "constraint", "description": "final_score = fit x engagement x risk; printed = final_score - rank*delta micro-term; ONLY printed-score tie-break = candidate_id ascending", "steps": ["assert printed strictly decreasing with rank", "assert equal-score rows ordered candidate_id ascending"], "passes": false},
-    {"id": "F6.3", "goal": 6, "category": "trap", "description": "top-100 has zero honeypot_flag and zero hard_gate; honeypot exposure comfortably <<10%", "steps": ["assert zero detected honeypots in top-100", "assert exposure margin"], "passes": false},
-    {"id": "F6.4", "goal": 6, "category": "artifact", "description": "submission.csv columns exactly candidate_id,rank,score,reasoning; exactly 100 rows; validate_submission.py passes", "steps": ["write CSV", "run validate_submission.py and assert 'Submission is valid.'"], "passes": false},
-    {"id": "F6.5", "goal": 6, "category": "functional", "description": "fill exactly 100 with best-available eligibles; filler_flag == fit_tier==Filler", "steps": ["assert exactly 100 rows even when relevant < 100", "assert fillers flagged"], "passes": false},
-    {"id": "F6.6", "goal": 6, "category": "artifact", "description": "selection_manifest.json: counts, eligible, excluded, exclusions-by-reason, top-excluded, config hash, git, timestamp", "steps": ["emit manifest", "assert fields"], "passes": false},
-    {"id": "F6.7", "goal": 6, "category": "functional", "description": "11-point internal validation suite (finite, rank-order consistency, eligibility-vs-primitives, top-100 correctness, alignment, tie-break audit, reasoning checks, CSV round-trip, top-excluded, provenance)", "steps": ["run suite on final dataframe", "assert all 11 checks pass"], "passes": false},
-
-    {"id": "F7.1", "goal": 7, "category": "functional", "description": "deterministic evidence->narrative compiler (7A planner role-tags/orders IR; 7B realizer rank-band-toned slot grammar); pure projection of decided evidence", "steps": ["generate reasoning for top-100 sample", "assert never reads raw candidate data / selects evidence"], "passes": false},
-    {"id": "F7.2", "goal": 7, "category": "trap", "description": "citeable whitelist enforced; raw skills[] array NEVER cited; every cited token resolves to an evidence_id", "steps": ["scan reasoning for skills[] tokens", "assert zero; assert named skills come only from assessment set"], "passes": false},
-    {"id": "F7.3", "goal": 7, "category": "trap", "description": "rank-tone consistency: top candidates carry positive evidence; fillers carry >=1 limitation", "steps": ["assert top rows positive", "assert filler rows acknowledge a limitation"], "passes": false},
-    {"id": "F7.4", "goal": 7, "category": "constraint", "description": "reasoning non-empty, unique, <=~240 chars, QUOTE_ALL CSV, UTF-8, newlines collapsed", "steps": ["assert uniqueness + length + QUOTE_ALL on output"], "passes": false},
-    {"id": "F7.5", "goal": 7, "category": "artifact", "description": "reasoning_provenance.json (clause->evidence_id) + reasoning_audit_report.json", "steps": ["emit side artifacts", "assert every clause bound to an evidence_id"], "passes": false},
-
-    {"id": "F8.1", "goal": 8, "category": "repro", "description": "two-command repro: precompute.py --candidates ... (unbudgeted) -> rank.py --candidates candidates.jsonl --out submission.csv (budgeted)", "steps": ["run both on sample", "assert rank.py is the single CSV-producing command"], "passes": false},
-    {"id": "F8.2", "goal": 8, "category": "constraint", "description": "ranking step CPU-only, no-network, <=5 min wall-clock, <=16 GB RAM, <=5 GB disk (measured)", "steps": ["measure wall-clock + peak RSS", "assert within budget on sample and (deferred) full pool"], "passes": false},
-    {"id": "F8.3", "goal": 8, "category": "constraint", "description": "Runtime ML Policy: rank.py instantiates/loads/executes NO neural model or inference engine", "steps": ["static + import check that no torch/transformers/onnx model is loaded at runtime"], "passes": false},
-    {"id": "F8.4", "goal": 8, "category": "functional", "description": "two-phase load: validate small artifacts + alignment + artifact<->pool hash binding BEFORE big matrices (fail in ~100ms)", "steps": ["corrupt an artifact hash", "assert loud fail before matrix load"], "passes": false},
-    {"id": "F8.5", "goal": 8, "category": "artifact", "description": "build_manifest.json SOLE root: hash chain + all sub-manifests + runtime_report + submission_sha256 + git + lib_versions + model_revision + thread_settings", "steps": ["emit root manifest", "assert it references every sub-manifest by path"], "passes": false},
-    {"id": "F8.6", "goal": 8, "category": "constraint", "description": "determinism: PYTHONHASHSEED=0, single-thread BLAS, stable hashing, no clocks/RNG; two rank.py runs -> byte-identical CSV", "steps": ["run rank.py twice", "assert identical output hash"], "passes": false},
-    {"id": "F8.7", "goal": 8, "category": "artifact", "description": "runtime_report.json per-stage timings + peak RSS + bytes loaded + cold/thread flags, emitted every run", "steps": ["emit report", "assert per-stage fields"], "passes": false},
-    {"id": "F8.8", "goal": 8, "category": "functional", "description": "Sandbox Runtime: runs Goal 1->3->5 builders on a <=100 sample using shipped frozen pool-stats (never recomputed)", "steps": ["run sandbox_rank.py on <=100 sample", "assert frozen stats applied, not recomputed", "assert <=5 min CPU"], "passes": false},
-    {"id": "F8.9", "goal": 8, "category": "packaging", "description": "README (single repro command), requirements.runtime.txt + requirements.precompute.txt (pinned), submission_metadata.yaml, Dockerfile.runtime + docker run recipe", "steps": ["assert files present", "assert README has the exact reproduce command"], "passes": false},
-
-    {"id": "FT.1", "goal": 4, "category": "trap", "description": "canonical keyword-stuffer (AI skills + wrong title, no corroboration) ranked DOWN / out of top-100", "steps": ["insert stuffer fixture into sample", "assert it does not enter top-10/top-100"], "passes": false},
-    {"id": "FT.2", "goal": 4, "category": "trap", "description": "plain-language Tier-5 (built rec/search system at product co, no buzzwords) ranked UP", "steps": ["insert Tier-5 fixture", "assert it ranks into the relevant tier"], "passes": false},
-    {"id": "FT.3", "goal": 5, "category": "trap", "description": "each honeypot archetype (H1/H2/H3) excluded from top-100", "steps": ["insert one fixture per archetype", "assert all excluded"], "passes": false},
-    {"id": "FT.4", "goal": 6, "category": "trap", "description": "behavioral down-weight: inactive/low-response perfect-on-paper candidate down-weighted vs an active equivalent", "steps": ["pair active vs inactive equivalents", "assert active ranks above inactive"], "passes": false}
+    {
+      "id": "F1.1",
+      "goal": 1,
+      "category": "functional",
+      "description": "parse_record(raw)->canonical struct: pure, reusable (Sandbox parity), separate from the writer",
+      "steps": [
+        "parse a sample record",
+        "assert all schema fields present and typed",
+        "assert pure (no pool-level state)"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F1.2",
+      "goal": 1,
+      "category": "artifact",
+      "description": "candidates.parquet nested list<struct>+map table, source row order, lossless round-trip",
+      "steps": [
+        "stream-write sample to parquet",
+        "reload and compare to source JSON for byte/semantic equality",
+        "assert row i == i-th source line"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F1.3",
+      "goal": 1,
+      "category": "artifact",
+      "description": "candidate_ids.npy int32 [N], 7-digit part, authoritative alignment key",
+      "steps": [
+        "emit candidate_ids.npy",
+        "assert dtype int32 and length N",
+        "assert matches parquet ids in order"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F1.4",
+      "goal": 1,
+      "category": "constraint",
+      "description": "streaming write is memory-frugal (one RecordBatch resident), ~5-10k/batch, Zstd, pinned Arrow schema",
+      "steps": [
+        "measure peak RSS over sample ingest",
+        "assert bounded (no full-table materialization)"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F1.5",
+      "goal": 1,
+      "category": "constraint",
+      "description": "integrity: exactly-N rows, candidate_id unique and ^CAND_[0-9]{7}$, quarantine-not-drop policy",
+      "steps": [
+        "run integrity asserts on sample",
+        "inject a malformed line and assert quarantine+count, not crash"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F1.6",
+      "goal": 1,
+      "category": "artifact",
+      "description": "ingest_manifest.json (rows, quarantine, source+output sha256, schema fp, versions, git, timestamp)",
+      "steps": [
+        "emit manifest",
+        "assert all fields present and hashes match files"
+      ],
+      "passes": true
+    },
+    {
+      "id": "F2.1",
+      "goal": 2,
+      "category": "artifact",
+      "description": "jd_query.json typed-criteria catalog + lexical groups+synonyms + ideal narrative + anti-profile narratives+ordered labels + divergence decl",
+      "steps": [
+        "author from job_description.docx",
+        "assert 5 must-haves, nice-to-haves, disqualifiers incl consulting hard gate, modifiers, atomic engagement signals"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F2.2",
+      "goal": 2,
+      "category": "artifact",
+      "description": "jd_ideal.npy [1x384] f32 L2-norm via query prefix",
+      "steps": [
+        "embed ideal narrative",
+        "assert shape and unit norm"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F2.3",
+      "goal": 2,
+      "category": "artifact",
+      "description": "jd_antiprofile.npy [Ax384] f32 L2-norm, row order == declared label order",
+      "steps": [
+        "embed each archetype narrative",
+        "assert row order matches jd_query labels"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F2.4",
+      "goal": 2,
+      "category": "functional",
+      "description": "build-time validation: schema well-formed, every evidence_sources path exists in candidate_schema.json, unique ids, valid enums",
+      "steps": [
+        "run validator",
+        "assert every evidence path resolves in candidate_schema.json"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F2.5",
+      "goal": 2,
+      "category": "artifact",
+      "description": "jd_manifest.json (sha256 each file, model+revision, dim, normalize, prefix, git, timestamp)",
+      "steps": [
+        "emit manifest",
+        "assert fields + hashes"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3.1",
+      "goal": 3,
+      "category": "functional",
+      "description": "builder(candidate, frozen_inputs) reusable per-candidate derivation (REF_DATE, jd vectors, company_table, concept_registry, model frozen)",
+      "steps": [
+        "run builder on sample candidate",
+        "assert pool-independent given frozen inputs (skips REF_DATE pre-scan)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3.2",
+      "goal": 3,
+      "category": "artifact",
+      "description": "embeddings_identity.npy + embeddings_evidence.npy [Nx384] f32 L2-norm, passage prefix, query-aware evidence-doc assembly",
+      "steps": [
+        "build both for sample",
+        "assert shapes, unit norm, deterministic assembly order"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3.3",
+      "goal": 3,
+      "category": "artifact",
+      "description": "features.npy [NxF] raw + features.parquet + feature_manifest.json (G1-G10 + 23 signals + corroboration channels)",
+      "steps": [
+        "build features for sample",
+        "assert F matches manifest and all groups present"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3.4",
+      "goal": 3,
+      "category": "constraint",
+      "description": "NaN+_present invariant: _present==0 <=> value is NaN; no sentinels, no imputation",
+      "steps": [
+        "assert NaN pattern matches present flags across all nullable cols"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3.5",
+      "goal": 3,
+      "category": "artifact",
+      "description": "bm25_index/ CSR npz + idf.npy + doclen.npy + vocab.json; narrative-only corpus (skills[] excluded); controlled phrase-joining",
+      "steps": [
+        "build index for sample",
+        "assert skills-array tokens absent",
+        "assert phrase tokens preserved"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3.6",
+      "goal": 3,
+      "category": "artifact",
+      "description": "normalization_stats.json per-feature full-pool percentiles {count,missing,min,max,mean,std,p1..p99}",
+      "steps": [
+        "emit stats",
+        "assert per-feature percentile fields present"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3.7",
+      "goal": 3,
+      "category": "artifact",
+      "description": "evidence_snippets row-addressable sidecar (offsets+blob) with stable evidence_id; O(100) random access",
+      "steps": [
+        "build sidecar",
+        "materialize 100 random rows without full load",
+        "assert stable evidence_ids"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3.8",
+      "goal": 3,
+      "category": "constraint",
+      "description": "REF_DATE = max(last_active_date in pool)+1 day, frozen in manifest, never today()/build-time",
+      "steps": [
+        "compute REF_DATE pass-1",
+        "assert frozen in manifest and used pool-wide"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F3.9",
+      "goal": 3,
+      "category": "constraint",
+      "description": "alignment: row i aligns across both embeddings, features, candidate_ids, parquet; repr_manifest.json + loud-fail assertion",
+      "steps": [
+        "run alignment assert",
+        "assert candidate_ids match Goal 1 and length N"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4.1",
+      "goal": 4,
+      "category": "functional",
+      "description": "4A retrieval: recall-first union shortlist (dense_evidence U dense_identity U BM25 U structural_prefilter), membership only",
+      "steps": [
+        "build shortlist",
+        "assert every planted Tier-5 fixture is included"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4.2",
+      "goal": 4,
+      "category": "functional",
+      "description": "4B criterion eval: per-criterion satisfaction + evidence trail via trust-tiered noisy-OR x soft corroboration gate; feature transforms on frozen stats",
+      "steps": [
+        "evaluate fixtures",
+        "assert stuffer(Tier-3 only)->~floor, Tier-5(Tier-2)->satisfied"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4.3",
+      "goal": 4,
+      "category": "functional",
+      "description": "4C fusion: structured = MH_softAND x (1+NH_bonus) x CM_modifier (criterion-satisfaction spine)",
+      "steps": [
+        "fuse fixtures",
+        "assert high dense cosine alone cannot inflate fit"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4.4",
+      "goal": 4,
+      "category": "functional",
+      "description": "4D calibration: tail-anchored calibrated fit_score + fit_tier {Elite,Strong,Plausible,Filler}",
+      "steps": [
+        "calibrate against pool stats",
+        "assert irrelevant median maps near 0 not 0.5"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4.5",
+      "goal": 4,
+      "category": "functional",
+      "description": "4E modifiers: engagement_modifier in [0.7,1.1] + risk_modifier in [0.5,1.0], bounded, applied in Goal 6",
+      "steps": [
+        "compute modifiers",
+        "assert low-fit x high-engagement stays low (HR-Manager trap)"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4.6",
+      "goal": 4,
+      "category": "artifact",
+      "description": "fit bundle (contracts C7): fit_score, subscores, per-criterion satisfaction+fit_contribution, evidence trail (evidence_id/source_tier/jd_label), fit_tier, corroboration-breadth count",
+      "steps": [
+        "emit bundle for shortlist",
+        "assert all C7 fields present"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F4.7",
+      "goal": 4,
+      "category": "artifact",
+      "description": "pool distribution stats (BM25/dense_identity/dense_evidence[/CE]) emitted offline for shortlist-independent calibration",
+      "steps": [
+        "emit pool stats",
+        "assert reproducible calibration uses them"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F5.1",
+      "goal": 5,
+      "category": "functional",
+      "description": "risk_flags(features) reusable; H1 yoe-tenure>2, H2 tenure-yoe>2, H3 >=2 expert/adv skills with duration 0; OR-fired",
+      "steps": [
+        "run on fixtures",
+        "assert OR firing and per-rule evidence persisted"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F5.2",
+      "goal": 5,
+      "category": "trap",
+      "description": "honeypot detection invariants: rule=>condition; no candidate in the empty (0.5,2.0] yoe-tenure gap",
+      "steps": [
+        "assert H1=>yoe-tenure>2 etc",
+        "assert empty-gap property on sample"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F5.3",
+      "goal": 5,
+      "category": "functional",
+      "description": "consulting_entire_career hard gate + any_product_stint override + suppression_evidence",
+      "steps": [
+        "fire gate on all-consulting fixture",
+        "assert override on product-stint fixture with suppression_evidence"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F5.4",
+      "goal": 5,
+      "category": "functional",
+      "description": "stuffer_suspect_flag diagnostic (runtime; high lexical-dense divergence + zero Tier-1/2 + title/domain mismatch), audit-only never excludes",
+      "steps": [
+        "flag stuffer fixture",
+        "assert never used for exclusion"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F5.5",
+      "goal": 5,
+      "category": "artifact",
+      "description": "risk_flags artifact aligned by row order + risk_manifest.json",
+      "steps": [
+        "emit artifact",
+        "assert alignment + manifest fields"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F6.1",
+      "goal": 6,
+      "category": "functional",
+      "description": "eligibility: hard_gate_flag = honeypot OR (consulting AND NOT suppressed), derived not persisted; score everyone, select eligible",
+      "steps": [
+        "derive eligibility",
+        "assert selection restricted to eligible subset"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F6.2",
+      "goal": 6,
+      "category": "constraint",
+      "description": "final_score = fit x engagement x risk; printed = final_score - rank*delta micro-term; ONLY printed-score tie-break = candidate_id ascending",
+      "steps": [
+        "assert printed strictly decreasing with rank",
+        "assert equal-score rows ordered candidate_id ascending"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F6.3",
+      "goal": 6,
+      "category": "trap",
+      "description": "top-100 has zero honeypot_flag and zero hard_gate; honeypot exposure comfortably <<10%",
+      "steps": [
+        "assert zero detected honeypots in top-100",
+        "assert exposure margin"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F6.4",
+      "goal": 6,
+      "category": "artifact",
+      "description": "submission.csv columns exactly candidate_id,rank,score,reasoning; exactly 100 rows; validate_submission.py passes",
+      "steps": [
+        "write CSV",
+        "run validate_submission.py and assert 'Submission is valid.'"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F6.5",
+      "goal": 6,
+      "category": "functional",
+      "description": "fill exactly 100 with best-available eligibles; filler_flag == fit_tier==Filler",
+      "steps": [
+        "assert exactly 100 rows even when relevant < 100",
+        "assert fillers flagged"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F6.6",
+      "goal": 6,
+      "category": "artifact",
+      "description": "selection_manifest.json: counts, eligible, excluded, exclusions-by-reason, top-excluded, config hash, git, timestamp",
+      "steps": [
+        "emit manifest",
+        "assert fields"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F6.7",
+      "goal": 6,
+      "category": "functional",
+      "description": "11-point internal validation suite (finite, rank-order consistency, eligibility-vs-primitives, top-100 correctness, alignment, tie-break audit, reasoning checks, CSV round-trip, top-excluded, provenance)",
+      "steps": [
+        "run suite on final dataframe",
+        "assert all 11 checks pass"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F7.1",
+      "goal": 7,
+      "category": "functional",
+      "description": "deterministic evidence->narrative compiler (7A planner role-tags/orders IR; 7B realizer rank-band-toned slot grammar); pure projection of decided evidence",
+      "steps": [
+        "generate reasoning for top-100 sample",
+        "assert never reads raw candidate data / selects evidence"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F7.2",
+      "goal": 7,
+      "category": "trap",
+      "description": "citeable whitelist enforced; raw skills[] array NEVER cited; every cited token resolves to an evidence_id",
+      "steps": [
+        "scan reasoning for skills[] tokens",
+        "assert zero; assert named skills come only from assessment set"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F7.3",
+      "goal": 7,
+      "category": "trap",
+      "description": "rank-tone consistency: top candidates carry positive evidence; fillers carry >=1 limitation",
+      "steps": [
+        "assert top rows positive",
+        "assert filler rows acknowledge a limitation"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F7.4",
+      "goal": 7,
+      "category": "constraint",
+      "description": "reasoning non-empty, unique, <=~240 chars, QUOTE_ALL CSV, UTF-8, newlines collapsed",
+      "steps": [
+        "assert uniqueness + length + QUOTE_ALL on output"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F7.5",
+      "goal": 7,
+      "category": "artifact",
+      "description": "reasoning_provenance.json (clause->evidence_id) + reasoning_audit_report.json",
+      "steps": [
+        "emit side artifacts",
+        "assert every clause bound to an evidence_id"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8.1",
+      "goal": 8,
+      "category": "repro",
+      "description": "two-command repro: precompute.py --candidates ... (unbudgeted) -> rank.py --candidates candidates.jsonl --out submission.csv (budgeted)",
+      "steps": [
+        "run both on sample",
+        "assert rank.py is the single CSV-producing command"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8.2",
+      "goal": 8,
+      "category": "constraint",
+      "description": "ranking step CPU-only, no-network, <=5 min wall-clock, <=16 GB RAM, <=5 GB disk (measured)",
+      "steps": [
+        "measure wall-clock + peak RSS",
+        "assert within budget on sample and (deferred) full pool"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8.3",
+      "goal": 8,
+      "category": "constraint",
+      "description": "Runtime ML Policy: rank.py instantiates/loads/executes NO neural model or inference engine",
+      "steps": [
+        "static + import check that no torch/transformers/onnx model is loaded at runtime"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8.4",
+      "goal": 8,
+      "category": "functional",
+      "description": "two-phase load: validate small artifacts + alignment + artifact<->pool hash binding BEFORE big matrices (fail in ~100ms)",
+      "steps": [
+        "corrupt an artifact hash",
+        "assert loud fail before matrix load"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8.5",
+      "goal": 8,
+      "category": "artifact",
+      "description": "build_manifest.json SOLE root: hash chain + all sub-manifests + runtime_report + submission_sha256 + git + lib_versions + model_revision + thread_settings",
+      "steps": [
+        "emit root manifest",
+        "assert it references every sub-manifest by path"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8.6",
+      "goal": 8,
+      "category": "constraint",
+      "description": "determinism: PYTHONHASHSEED=0, single-thread BLAS, stable hashing, no clocks/RNG; two rank.py runs -> byte-identical CSV",
+      "steps": [
+        "run rank.py twice",
+        "assert identical output hash"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8.7",
+      "goal": 8,
+      "category": "artifact",
+      "description": "runtime_report.json per-stage timings + peak RSS + bytes loaded + cold/thread flags, emitted every run",
+      "steps": [
+        "emit report",
+        "assert per-stage fields"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8.8",
+      "goal": 8,
+      "category": "functional",
+      "description": "Sandbox Runtime: runs Goal 1->3->5 builders on a <=100 sample using shipped frozen pool-stats (never recomputed)",
+      "steps": [
+        "run sandbox_rank.py on <=100 sample",
+        "assert frozen stats applied, not recomputed",
+        "assert <=5 min CPU"
+      ],
+      "passes": false
+    },
+    {
+      "id": "F8.9",
+      "goal": 8,
+      "category": "packaging",
+      "description": "README (single repro command), requirements.runtime.txt + requirements.precompute.txt (pinned), submission_metadata.yaml, Dockerfile.runtime + docker run recipe",
+      "steps": [
+        "assert files present",
+        "assert README has the exact reproduce command"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FT.1",
+      "goal": 4,
+      "category": "trap",
+      "description": "canonical keyword-stuffer (AI skills + wrong title, no corroboration) ranked DOWN / out of top-100",
+      "steps": [
+        "insert stuffer fixture into sample",
+        "assert it does not enter top-10/top-100"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FT.2",
+      "goal": 4,
+      "category": "trap",
+      "description": "plain-language Tier-5 (built rec/search system at product co, no buzzwords) ranked UP",
+      "steps": [
+        "insert Tier-5 fixture",
+        "assert it ranks into the relevant tier"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FT.3",
+      "goal": 5,
+      "category": "trap",
+      "description": "each honeypot archetype (H1/H2/H3) excluded from top-100",
+      "steps": [
+        "insert one fixture per archetype",
+        "assert all excluded"
+      ],
+      "passes": false
+    },
+    {
+      "id": "FT.4",
+      "goal": 6,
+      "category": "trap",
+      "description": "behavioral down-weight: inactive/low-response perfect-on-paper candidate down-weighted vs an active equivalent",
+      "steps": [
+        "pair active vs inactive equivalents",
+        "assert active ranks above inactive"
+      ],
+      "passes": false
+    }
   ]
 }

@@ -2,7 +2,7 @@ REDROB RANKING — BUILD PROGRESS
 ================================
 (Update every session. DONE / NEXT / KEY DECISIONS / RISKS / DEVIATIONS.)
 
-CURRENT STATE: PHASE 0 in progress (initializer).
+CURRENT STATE: PHASE 1. Goal 1 ingest DONE + verified on real data. Next: Goal 2 JD artifact.
 
 DONE
 - Read full spec: Architecture/ (overview, contracts, runtime, artifacts, Goal1-8),
@@ -40,5 +40,15 @@ RISKS
   one-time network fetch (allowed; no-network binds only the ranking step). Verify network at build.
 - No Docker locally -> Dockerfile shipped but unverified here; sandbox_rank.py is the tested path.
 
+DONE (Goal 1)
+- src/ingest.py: pure parse_record (Sandbox parity) + streaming Zstd nested-Parquet writer +
+  candidate_ids.npy + ingest_manifest.json + quarantine-not-drop. read_parquet_records helper.
+- Verified on real data: 3000 rows in 2.68s, +75MB RSS; full-100k extrapolates ~90s/~12MB parquet.
+  Round-trip lossless modulo documented float32 type choice. Sample (1510 rows) ingests clean.
+- scripts/make_sample.py: deterministic stratified 1510-row sample (50 honeypot/300 keyword/
+  80 consulting/1070 bg + 10 fixtures) at data/sample/sample.jsonl.
+- Features F1.1-F1.6 passing. 20 tests green.
+
 DEVIATIONS FROM PLAN (log each with one-line rationale)
-- (none yet)
+- Goal 1 D2 dictionary-encoding of low-card enums collapsed to plain UTF-8 strings: identical
+  round-trip, avoids cross-batch dict-unification pitfalls in nested structs, storage trivial.
