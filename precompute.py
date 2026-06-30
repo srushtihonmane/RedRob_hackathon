@@ -47,10 +47,14 @@ def main():
         print("      (jd vectors present; skipping)")
 
     print("[3/5] representation (embeddings/features/bm25/snippets) ... this is the heavy step")
-    build.build_representation(os.path.join(args.artifacts, "candidates.parquet"),
-                               os.path.join(args.artifacts, "candidate_ids.npy"),
-                               args.artifacts, jd_query_path=os.path.join(args.jd, "jd_query.json"),
-                               git_commit=gc)
+    parquet = os.path.join(args.artifacts, "candidates.parquet")
+    ids = os.path.join(args.artifacts, "candidate_ids.npy")
+    # REF_DATE via a streaming pre-scan (never materializes the full table).
+    ref_date = build.compute_ref_date(ingest.iter_parquet_records(parquet))
+    print(f"      REF_DATE = {ref_date} (max last_active + 1 day)")
+    build.build_representation_streaming(parquet, ids, args.artifacts, ref_date=ref_date,
+                                         jd_query_path=os.path.join(args.jd, "jd_query.json"),
+                                         git_commit=gc)
 
     print("[4/5] risk flags ...")
     bundle = scoring.load_bundle(args.artifacts, jd_dir=args.jd)

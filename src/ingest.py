@@ -243,6 +243,18 @@ def iter_jsonl(path: str | os.PathLike) -> Iterator[tuple[int, str]]:
                 yield lineno, line
 
 
+def iter_parquet_records(path: str | os.PathLike, batch_size: int = 4000):
+    """Stream canonical records from candidates.parquet one row-group batch at a time
+    (memory-frugal — never materializes the whole 100k table). Yields dicts in row order."""
+    pf = pq.ParquetFile(path)
+    for batch in pf.iter_batches(batch_size=batch_size):
+        for row in batch.to_pylist():
+            row.pop("row_index", None)
+            sig = row["redrob_signals"]
+            sig["skill_assessment_scores"] = {k: float(v) for k, v in (sig["skill_assessment_scores"] or [])}
+            yield row
+
+
 def read_parquet_records(path: str | os.PathLike) -> list[dict]:
     """Reload candidates.parquet into canonical structs matching ``parse_record`` output
     (map -> dict, ``row_index`` dropped). Used by round-trip checks and the Sandbox path."""

@@ -245,6 +245,113 @@ def _normalization_stats(feats: np.ndarray, names: list[str], nullable: set[str]
     return stats
 
 
+def build_representation_streaming(parquet_path: str, candidate_ids_path: str, out_dir: str,
+                                   ref_date: _dt.date, jd_query_path: str = "jd/jd_query.json",
+                                   chunk: int = EMBED_CHUNK, git_commit: str | None = None) -> dict:
+    """Memory-frugal, CHECKPOINTED, RESUMABLE full-pool builder (Goal 8 build-discipline).
+    Streams the parquet (never materializes 100k records), writes embeddings/features into
+    memmaps, and checkpoints progress so an interrupted run resumes where it left off."""
+    from .ingest import iter_parquet_records
+    import json as _json
+    out = Path(out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    fz = FrozenInputs.load(ref_date, jd_query_path=jd_query_path)
+    if fz.jd_ideal is None:
+        raise AssertionError("JD vectors not found — run jd_build.build first")
+    ids = np.load(candidate_ids_path)
+    n = len(ids)
+
+    # Determine F + feature_names from one row (zero embeddings -> structure only).
+    first = next(iter_parquet_records(parquet_path, batch_size=1))
+    names = list(assemble_features(first, np.zeros(384, np.float32), np.zeros(384, np.float32), fz).values.keys())
+    F = len(names)
+
+    ckpt_path = out / "_build_ckpt.json"
+    feats = np.lib.format.open_memmap(out / "features.npy", mode="r+" if ckpt_path.exists() else "w+",
+                                      dtype=np.float32, shape=(n, F))
+    eid = np.lib.format.open_memmap(out / "embeddings_identity.npy", mode="r+" if ckpt_path.exists() else "w+",
+                                    dtype=np.float32, shape=(n, 384))
+    eev = np.lib.format.open_memmap(out / "embeddings_evidence.npy", mode="r+" if ckpt_path.exists() else "w+",
+                                    dtype=np.float32, shape=(n, 384))
+    done = 0
+    if ckpt_path.exists():
+        ck = _json.load(open(ckpt_path))
+        if ck.get("F") == F and ck.get("names") == names:
+            done = ck.get("completed", 0)
+            print(f"      [resume] skipping first {done} candidates")
+
+    buf, base = [], done
+    for idx, rec in enumerate(iter_parquet_records(parquet_path, batch_size=max(chunk, 2000))):
+        if idx < done:
+            continue
+        buf.append(rec)
+        if len(buf) >= chunk:
+            base = _flush_stream(buf, base, fz, jd_query_path, names, feats, eid, eev)
+            feats.flush(); eid.flush(); eev.flush()
+            _json.dump({"completed": base, "F": F, "names": names}, open(ckpt_path, "w"))
+            buf = []
+    if buf:
+        base = _flush_stream(buf, base, fz, jd_query_path, names, feats, eid, eev)
+    feats.flush(); eid.flush(); eev.flush()
+    assert base == n, f"wrote {base} rows, expected {n}"
+
+    return _finalize_representation(out, parquet_path, candidate_ids_path, names, feats, fz,
+                                    ref_date, git_commit, streaming=True)
+
+
+def _flush_stream(buf, base, fz, jd_query_path, names, feats, eid, eev) -> int:
+    iv, ev = embed_chunk(buf, fz, jd_query_path)
+    for i, rec in enumerate(buf):
+        row = assemble_features(rec, iv[i], ev[i], fz)
+        if list(row.values.keys()) != names:
+            raise AssertionError(f"feature key mismatch at {rec['candidate_id']}")
+        feats[base + i] = [row.values[k] for k in names]
+        eid[base + i] = iv[i]
+        eev[base + i] = ev[i]
+    return base + len(buf)
+
+
+def _finalize_representation(out: Path, parquet_path, candidate_ids_path, names, feats, fz,
+                            ref_date, git_commit, streaming=False) -> dict:
+    """Shared finalize: normalization_stats, features.parquet, manifests, bm25, snippets, align."""
+    from .ingest import iter_parquet_records, candidate_id_to_int
+    import pyarrow as pa
+    import pyarrow.parquet as pq
+    n = feats.shape[0]
+    nullable = {nm for nm in names if nm + "_present" in names}
+    cols = {nm: pa.array([None if np.isnan(v) else float(v) for v in feats[:, j]], pa.float32())
+            for j, nm in enumerate(names)}
+    ids_int = np.load(candidate_ids_path)
+    cols = {"candidate_id": pa.array(["CAND_%07d" % int(x) for x in ids_int], pa.string()), **cols}
+    pq.write_table(pa.table(cols), out / "features.parquet", compression="zstd")
+    write_json(out / "normalization_stats.json", _normalization_stats(feats, names, nullable))
+    write_json(out / "feature_manifest.json", {
+        "schema_version": 1, "F": len(names), "n_rows": int(n), "ref_date": ref_date.isoformat(),
+        "antiprofile_label_order": fz.antiprofile_labels, "model": fz.model,
+        "company_table_sha256": sha256_file("reference/company_table.json"),
+        "concept_registry_sha256": sha256_file("reference/concept_registry.json"),
+        "columns": [{"index": j, "name": nm, "group": feature_group(nm),
+                     "nullable": nm in nullable, "is_present_flag": nm.endswith("_present")}
+                    for j, nm in enumerate(names)]})
+    bm = bm25mod.build_index(iter_parquet_records(parquet_path), out_dir=str(out))
+    sn = snippetsmod.build_sidecar(iter_parquet_records(parquet_path), fz, str(out))
+    assert feats.shape[0] == n == len(ids_int)
+    repr_manifest = {
+        "schema_version": 1, "n_rows": int(n), "F": len(names), "ref_date": ref_date.isoformat(),
+        "streaming": streaming,
+        "features_sha256": sha256_file(out / "features.npy"),
+        "embeddings_identity_sha256": sha256_file(out / "embeddings_identity.npy"),
+        "embeddings_evidence_sha256": sha256_file(out / "embeddings_evidence.npy"),
+        "feature_manifest_sha256": sha256_file(out / "feature_manifest.json"),
+        "normalization_stats_sha256": sha256_file(out / "normalization_stats.json"),
+        "bm25": bm, "snippets": sn, "model": fz.model, "git_commit": git_commit}
+    write_json(out / "repr_manifest.json", repr_manifest)
+    ck = out / "_build_ckpt.json"
+    if ck.exists():
+        ck.unlink()
+    return repr_manifest
+
+
 def build_representation(parquet_path: str, candidate_ids_path: str, out_dir: str,
                          ref_date: _dt.date | None = None, jd_query_path: str = "jd/jd_query.json",
                          git_commit: str | None = None) -> dict:
