@@ -235,7 +235,7 @@
         "build shortlist",
         "assert every planted Tier-5 fixture is included"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4.2",
@@ -246,7 +246,7 @@
         "evaluate fixtures",
         "assert stuffer(Tier-3 only)->~floor, Tier-5(Tier-2)->satisfied"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4.3",
@@ -257,7 +257,7 @@
         "fuse fixtures",
         "assert high dense cosine alone cannot inflate fit"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4.4",
@@ -268,7 +268,7 @@
         "calibrate against pool stats",
         "assert irrelevant median maps near 0 not 0.5"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4.5",
@@ -279,7 +279,7 @@
         "compute modifiers",
         "assert low-fit x high-engagement stays low (HR-Manager trap)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4.6",
@@ -301,7 +301,7 @@
         "emit pool stats",
         "assert reproducible calibration uses them"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F5.1",
