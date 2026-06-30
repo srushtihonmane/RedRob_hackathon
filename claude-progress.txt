@@ -2,10 +2,17 @@ REDROB RANKING — BUILD PROGRESS
 ================================
 (Update every session. DONE / NEXT / KEY DECISIONS / RISKS / DEVIATIONS.)
 
-CURRENT STATE: PHASE 1. ALL 8 GOALS DONE. 57/57 features pass; 84 tests green on sample.
-rank.py: 0.13s/62MB, byte-identical, no neural model. Two-command repro proven (precompute
--> rank -> valid CSV). Sandbox + packaging done. REMAINING: (a) embedding-throughput fix +
-checkpoint/resume, then the deferred FULL 100k precompute run; (b) optional D9 tuning.
+CURRENT STATE: PHASE 1. ALL 8 GOALS DONE. 57/57 features pass; 85 tests green on sample.
+rank.py: 0.13s/62MB, byte-identical, no neural model. Two-command repro proven. Sandbox +
+packaging done. Resumable streaming/memmap full-pool builder (byte-identical parity w/ in-memory).
+Full ingest validated at scale (100000 rows, 0 quarantined, 13s).
+D9 audit (sample): top-50 clean (real ML titles, Elite/Strong, 0 honeypots, ~Tier-1 corroboration);
+suspicious titles only in the filler tail (51-100), honestly marked (sample has ~66 relevant of
+1510; full pool richer). tiers: 25 Elite/20 Strong/21 Plausible/34 Filler.
+
+FULL 100k PRECOMPUTE: launched in background (RAM freed to 4GB). Resumable (checkpoint per chunk).
+When it finishes: run `python rank.py --candidates candidates.jsonl --out submission.csv` and
+validate. If interrupted, re-run precompute (resumes from checkpoint).
 
 (historical) Goals 1-6 DONE. END-TO-END SUBMISSION VALID on sample
 (validate_submission.py: "Submission is valid."). Next: Goal 7 reasoning (replace placeholder),
