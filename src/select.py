@@ -192,14 +192,31 @@ def write_selection_manifest(sel: Selection, out_dir: str, config_hash: str = ""
 
 
 def produce_submission(art_dir: str, out_csv: str, cfg=None, reasoning_fn=None,
-                       jd_dir: str = "jd", git_commit: str | None = None):
-    """End-to-end: load -> score -> select -> validate -> write CSV + manifest."""
+                       jd_dir: str = "jd", git_commit: str | None = None,
+                       use_goal7: bool = True):
+    """End-to-end: load -> score -> select (Goal 7 reasoning) -> validate -> write CSV + manifest."""
+    from . import scoring as scoringmod2
+    cfg = cfg or scoringmod2.ScoringConfig()
     bundle = scoringmod.load_bundle(art_dir, jd_dir=jd_dir)
     res = scoringmod.score_pool(bundle, cfg)
+    provenance = None
+    if reasoning_fn is None and use_goal7:
+        from . import reason as reasonmod
+        reasoning_fn, provenance = reasonmod.build_reasoner(bundle, res, cfg)
     sel = select(bundle, res, reasoning_fn=reasoning_fn)
     errs = validate_selection(sel, bundle, res)
     if errs:
         raise AssertionError("selection validation failed:\n  " + "\n  ".join(errs))
     write_submission(sel, out_csv)
     write_selection_manifest(sel, str(Path(out_csv).parent), git_commit=git_commit)
+    if provenance is not None:
+        outd = Path(out_csv).parent
+        write_json(outd / "reasoning_provenance.json",
+                   {r["candidate_id"]: provenance.get(r["candidate_id"], []) for r in sel.rows})
+        flagged = [{"candidate_id": r["candidate_id"], "rank": r["rank"], "reason": why}
+                   for r in sel.rows
+                   for why in (["no evidence ids"] if not provenance.get(r["candidate_id"]) else [])
+                   + (["very short"] if len(r["reasoning"]) < 25 else [])]
+        write_json(outd / "reasoning_audit_report.json",
+                   {"n_rows": len(sel.rows), "n_flagged": len(flagged), "flagged": flagged})
     return sel

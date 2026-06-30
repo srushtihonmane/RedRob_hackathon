@@ -29,15 +29,26 @@ def _sentence_with(text: str, keywords: list[str]) -> str | None:
     return None
 
 
+def _fmt_yoe(yoe) -> str:
+    try:
+        return f"{round(float(yoe), 1):g}"
+    except (TypeError, ValueError):
+        return str(yoe)
+
+
 def extract_snippets(rec: dict, fz: FrozenInputs) -> list[dict]:
     cid = rec["candidate_id"]
     p = rec["profile"]
+    yoe = _fmt_yoe(p.get("years_of_experience"))
+    company = p.get("current_company", "")
     snips: list[dict] = [{
         "evidence_id": f"{cid}:anchor",
         "concept": None, "source_type": "anchor", "source_tier": "verified",
         "field_path": "profile",
-        "text": f"{p.get('current_title','')}, {p.get('years_of_experience','')} yrs at "
-                f"{p.get('current_company','')} ({fz.company_type(p.get('current_company',''))}).",
+        "text": f"{p.get('current_title','')}, {yoe} yrs at {company} "
+                f"({fz.company_type(company)}).",
+        "raw": {"current_title": p.get("current_title", ""), "years_of_experience": yoe,
+                "current_company": company, "company_type": fz.company_type(company)},
     }]
     assess = rec["redrob_signals"].get("skill_assessment_scores") or {}
     used_concepts: set[str] = set()
@@ -51,6 +62,7 @@ def extract_snippets(rec: dict, fz: FrozenInputs) -> list[dict]:
                 "concept": cname, "source_type": "assessment", "source_tier": "verified",
                 "field_path": "redrob_signals.skill_assessment_scores",
                 "text": f"Scored {score:g} on the {skill} assessment.",
+                "raw": {"skill": skill, "score": float(score)},
             })
             used_concepts.add(cname)
         # Demonstrated: a career span mentioning the concept.
