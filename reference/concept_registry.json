@@ -1,0 +1,42 @@
+{
+  "schema_version": 1,
+  "description": "Shared concept registry (Goal 3 D6). Keys align with jd_query.lexical_concept_groups. Per concept: exact assessment-skill names (from skill_assessment_scores vocabulary; the high-trust corroboration source) + lowercased keywords for title/skillmeta/lexical matching. Corroboration COUNTS are never computed here (Goal 4 owns min_sources).",
+  "concepts": {
+    "retrieval_embeddings": {
+      "assessment_skills": ["Embeddings", "Sentence Transformers", "Semantic Search", "RAG", "Hugging Face Transformers"],
+      "keywords": ["embeddings", "embedding", "sentence transformers", "semantic search", "dense retrieval", "retrieval", "rag", "bge", "e5", "nearest neighbor", "knn"]
+    },
+    "vector_db": {
+      "assessment_skills": ["Vector Search", "Milvus", "pgvector", "Qdrant", "Pinecone", "Weaviate", "OpenSearch", "Elasticsearch", "FAISS", "Haystack"],
+      "keywords": ["vector search", "vector database", "vector db", "vectordb", "milvus", "pgvector", "qdrant", "pinecone", "weaviate", "opensearch", "elasticsearch", "faiss", "haystack", "hybrid search", "hybrid retrieval"]
+    },
+    "ranking_eval": {
+      "assessment_skills": ["Information Retrieval", "Learning to Rank", "Recommendation Systems", "BM25"],
+      "keywords": ["ranking", "learning to rank", "ndcg", "mrr", "map", "information retrieval", "recommendation", "recommender", "recsys", "bm25", "relevance", "a/b test", "ab test", "offline evaluation", "search relevance"]
+    },
+    "learning_to_rank": {
+      "assessment_skills": ["Learning to Rank"],
+      "keywords": ["learning to rank", "lambdamart", "xgboost", "gradient boosted", "ltr", "pairwise ranking", "listwise ranking"]
+    },
+    "strong_python": {
+      "assessment_skills": ["Python", "PyTorch", "scikit-learn", "TensorFlow"],
+      "keywords": ["python", "pytorch", "scikit-learn", "sklearn", "tensorflow", "numpy", "pandas", "scipy"]
+    },
+    "llm_finetune": {
+      "assessment_skills": ["PEFT", "QLoRA", "LoRA", "Fine-tuning LLMs", "LLMs", "Prompt Engineering", "LangChain", "LlamaIndex"],
+      "keywords": ["fine-tuning", "fine tuning", "finetune", "fine-tune", "lora", "qlora", "peft", "instruction tuning", "rlhf", "llm", "large language model", "langchain", "llamaindex", "prompt engineering"]
+    },
+    "distributed_systems": {
+      "assessment_skills": ["MLOps", "Kubeflow", "MLflow", "BentoML"],
+      "keywords": ["distributed systems", "spark", "kafka", "scale", "low latency", "throughput", "kubernetes", "mlops", "inference optimization", "high throughput"]
+    },
+    "cv_speech": {
+      "assessment_skills": ["YOLO", "CNN", "Speech Recognition", "OpenCV", "Object Detection", "TTS", "Diffusion Models", "ASR", "GANs", "Image Classification", "Computer Vision"],
+      "keywords": ["computer vision", "image classification", "object detection", "segmentation", "yolo", "opencv", "speech recognition", "asr", "tts", "robotics", "perception", "cnn", "gan", "diffusion"]
+    },
+    "nlp_ir": {
+      "assessment_skills": ["NLP", "Information Retrieval", "BM25", "Semantic Search", "RAG"],
+      "keywords": ["nlp", "natural language processing", "information retrieval", "language model", "question answering", "rag", "named entity", "text classification"]
+    }
+  }
+}

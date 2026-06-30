@@ -135,7 +135,7 @@
         "run builder on sample candidate",
         "assert pool-independent given frozen inputs (skips REF_DATE pre-scan)"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3.2",
@@ -146,7 +146,7 @@
         "build both for sample",
         "assert shapes, unit norm, deterministic assembly order"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3.3",
@@ -157,7 +157,7 @@
         "build features for sample",
         "assert F matches manifest and all groups present"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3.4",
@@ -167,7 +167,7 @@
       "steps": [
         "assert NaN pattern matches present flags across all nullable cols"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3.5",
@@ -179,7 +179,7 @@
         "assert skills-array tokens absent",
         "assert phrase tokens preserved"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3.6",
@@ -190,7 +190,7 @@
         "emit stats",
         "assert per-feature percentile fields present"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3.7",
@@ -202,7 +202,7 @@
         "materialize 100 random rows without full load",
         "assert stable evidence_ids"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3.8",
@@ -213,7 +213,7 @@
         "compute REF_DATE pass-1",
         "assert frozen in manifest and used pool-wide"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3.9",
@@ -224,7 +224,7 @@
         "run alignment assert",
         "assert candidate_ids match Goal 1 and length N"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F4.1",

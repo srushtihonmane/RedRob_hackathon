@@ -42,10 +42,21 @@ def _embedder(model_name: str, cache_dir: str, threads: int):
     return TextEmbedding(model_name=model_name, cache_dir=cache_dir, threads=threads)
 
 
+def _default_threads() -> int:
+    # PRECOMPUTE-ONLY embedding: multi-thread for throughput. Embedding float nondeterminism
+    # is documented/accepted (shipped .npy artifacts are canonical; the budgeted ranking step
+    # never embeds and stays single-thread deterministic). Override with EMBED_THREADS.
+    env = os.environ.get("EMBED_THREADS")
+    if env:
+        return int(env)
+    return min(8, os.cpu_count() or 4)
+
+
 def get_embedder(jd_query_path: str = "jd/jd_query.json", cache_dir: str | None = None,
-                 threads: int = 1):
+                 threads: int | None = None):
     cfg = model_config(jd_query_path)
-    return _embedder(cfg["name"], cache_dir or _DEFAULT_CACHE, threads)
+    return _embedder(cfg["name"], cache_dir or _DEFAULT_CACHE,
+                     _default_threads() if threads is None else threads)
 
 
 def _normalize(mat: np.ndarray) -> np.ndarray:

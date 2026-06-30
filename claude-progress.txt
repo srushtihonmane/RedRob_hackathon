@@ -2,7 +2,25 @@ REDROB RANKING — BUILD PROGRESS
 ================================
 (Update every session. DONE / NEXT / KEY DECISIONS / RISKS / DEVIATIONS.)
 
-CURRENT STATE: PHASE 1. Goal 1 ingest DONE + verified on real data. Next: Goal 2 JD artifact.
+CURRENT STATE: PHASE 1. Goals 1-3 DONE + verified on sample. Next: Goal 4 scoring (4A-4E).
+
+DONE (Goal 2) - jd/jd_query.json (28 typed criteria), jd_ideal.npy, jd_antiprofile.npy [5],
+  jd_manifest. src/jd_build.py (validation: evidence paths resolve, enums, unique ids).
+  src/embed.py fastembed ONNX bge-small-en-v1.5 (deterministic 0.0 re-embed). F2.* pass.
+DONE (Goal 3) - reference/company_table.json (63 cos: 11 services / 8 fictional / 44 product),
+  reference/concept_registry.json (9 concepts -> assessment skills + keywords).
+  src/represent.py (132 features, NaN/_present by construction), src/build.py (2 embeddings +
+  query-aware evidence doc + archetype cosines + role-relevance; batch driver + sandbox builder
+  with 0.0 parity), src/bm25.py (narrative-only, skills excluded, phrase-join, precomputed W),
+  src/snippets.py (row-addressable sidecar). src/transforms.py (quantile/tail-anchor/trapezoid).
+  Sample artifacts built (1510 rows, F=132, REF_DATE=2026-05-28). F3.* pass. 49 tests green.
+  KEY trap signal verified: tier5 evidence_cos_ideal=0.90 vs stuffer 0.53; stuffer BM25=0.0.
+
+PERF RISK (must fix before full 100k run, DEFERRED): embedding throughput ~17 docs/s
+  (threads=8); sample (8.3k docs) = 460s -> full 100k (~600k docs) ~8.5h. Larger batch is
+  SLOWER (onnx). Fix path: fastembed parallel= multiprocessing (data-parallel across cores,
+  workers threads=1) + memmap-streaming write + checkpoint/resume. Target <2h. Sample rebuilds
+  are a one-time cost; Goal 4-7 just reload artifacts (fast), so this does NOT block the build.
 
 DONE
 - Read full spec: Architecture/ (overview, contracts, runtime, artifacts, Goal1-8),

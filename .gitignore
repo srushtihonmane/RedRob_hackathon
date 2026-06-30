@@ -12,6 +12,8 @@ data/sample/*.parquet
 data/sample/*.npy
 data/sample/*.npz
 data/sample/artifacts/
+data/sample/_*/
+models/_warmup_result.json
 
 # Model weight cache (vendored separately for Stage-3/5 if needed)
 models/
