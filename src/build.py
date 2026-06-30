@@ -40,10 +40,26 @@ def role_doc(role: dict) -> str:
     return f"{role.get('title','')}. {role.get('description','')}".strip()
 
 
-def evidence_doc(rec: dict, role_relevances: list[float]) -> str:
+def _concept_hit_count(text: str, all_keywords: list[str]) -> int:
+    t = (text or "").lower()
+    return sum(1 for k in all_keywords if k in t)
+
+
+def _recent_start(role: dict):
+    sd = role.get("start_date")
+    return represent.parse_date(sd) if isinstance(sd, str) else sd
+
+
+def evidence_doc(rec: dict, all_keywords: list[str]) -> str:
+    """Evidence doc = all role titles + descriptions ordered query-aware by lexical concept-hit
+    count (then recency), truncated to the token budget. (Replaces the per-role-embedding
+    relevance ordering — a faithful, ~3x-cheaper approximation: for the ~95% of candidates whose
+    descriptions fit 512 tokens the doc is identical; only the overflow tail reorders.)"""
     roles = rec["career_history"]
     titles = [r.get("title", "") for r in roles]
-    order = sorted(range(len(roles)), key=lambda i: -(role_relevances[i] if role_relevances else 0.0))
+    order = sorted(range(len(roles)),
+                   key=lambda i: (-_concept_hit_count(f"{titles[i]} {roles[i].get('description','')}", all_keywords),
+                                  -(_recent_start(roles[i]) or represent._dt.date.min).toordinal()))
     parts = [" . ".join(t for t in titles if t)]
     budget = EVIDENCE_CHAR_BUDGET
     for i in order:
@@ -72,11 +88,11 @@ def _recent_role_index(roles: list[dict]) -> int:
 
 
 def add_embedding_features(row: FeatureRow, rec: dict, identity_vec: np.ndarray,
-                           evidence_vec: np.ndarray, role_relevances: list[float],
-                           fz: FrozenInputs) -> None:
+                           evidence_vec: np.ndarray, fz: FrozenInputs) -> None:
     ideal = fz.jd_ideal[0]
+    ev_ideal = float(evidence_vec @ ideal)
     row.add("identity_cos_ideal", float(identity_vec @ ideal))
-    row.add("evidence_cos_ideal", float(evidence_vec @ ideal))
+    row.add("evidence_cos_ideal", ev_ideal)
     label_cos: dict[str, float] = {}
     for i, label in enumerate(fz.antiprofile_labels):
         anti = fz.jd_antiprofile[i]
@@ -84,59 +100,50 @@ def add_embedding_features(row: FeatureRow, rec: dict, identity_vec: np.ndarray,
         ec = float(evidence_vec @ anti)
         row.add(f"evidence_cos_{label}", ec)
         label_cos[label] = ec
-    rr = role_relevances or [0.0]
-    row.add("max_role_relevance", float(max(rr)))
-    row.add("mean_role_relevance", float(sum(rr) / len(rr)))
-    ridx = _recent_role_index(rec["career_history"])
-    row.add("recent_role_relevance", float(role_relevances[ridx]) if role_relevances else 0.0)
-    cv = label_cos.get("cv_speech_robotics", 0.0)
-    row.add("cv_speech_vs_nlp_lean", float(cv - (evidence_vec @ ideal)))
+    # G9 role-relevance features (unused by scoring) -> overall evidence relevance proxy,
+    # since per-role embeddings were dropped for throughput. Columns retained for stability.
+    row.add("max_role_relevance", ev_ideal)
+    row.add("mean_role_relevance", ev_ideal)
+    row.add("recent_role_relevance", ev_ideal)
+    row.add("cv_speech_vs_nlp_lean", float(label_cos.get("cv_speech_robotics", 0.0) - ev_ideal))
     row.add("identity_evidence_divergence", float(1.0 - (identity_vec @ evidence_vec)))
 
 
 def assemble_features(rec: dict, identity_vec: np.ndarray, evidence_vec: np.ndarray,
-                      role_relevances: list[float], fz: FrozenInputs) -> FeatureRow:
+                      fz: FrozenInputs) -> FeatureRow:
     row = represent.derive_structured(rec, fz)
-    add_embedding_features(row, rec, identity_vec, evidence_vec, role_relevances, fz)
+    add_embedding_features(row, rec, identity_vec, evidence_vec, fz)
     return row
 
 
 # --------------------------------------------------------------------------- #
 # Batched embedding of a chunk of candidates                                   #
 # --------------------------------------------------------------------------- #
+def _all_keywords(fz: FrozenInputs) -> list[str]:
+    kws: list[str] = []
+    for cdef in fz.concepts.values():
+        kws += cdef["keywords"]
+    return kws
+
+
 def embed_chunk(records: list[dict], fz: FrozenInputs, jd_query_path: str):
-    """Return (identity_vecs[n,384], evidence_vecs[n,384], role_relevances:list[list[float]]).
-    Two embed passes: (A) identity + all role docs; (B) assembled evidence docs."""
+    """Return (identity_vecs[n,384], evidence_vecs[n,384]). One embed pass over identity +
+    evidence docs (2 per candidate; per-role embeddings dropped for throughput)."""
     from . import embed
     n = len(records)
+    kws = _all_keywords(fz)
     id_docs = [identity_doc(r) for r in records]
-    role_counts = [len(r["career_history"]) for r in records]
-    role_docs = [role_doc(role) for r in records for role in r["career_history"]]
-
-    a_docs = id_docs + role_docs
-    a_vecs = embed.embed_passages(a_docs, jd_query_path=jd_query_path)
-    identity_vecs = a_vecs[:n]
-    role_vecs = a_vecs[n:]
-
-    ideal = fz.jd_ideal[0]
-    role_rel_all = (role_vecs @ ideal) if len(role_vecs) else np.zeros(0, dtype=np.float32)
-    role_relevances: list[list[float]] = []
-    off = 0
-    for k in role_counts:
-        role_relevances.append([float(x) for x in role_rel_all[off:off + k]])
-        off += k
-
-    ev_docs = [evidence_doc(records[i], role_relevances[i]) for i in range(n)]
-    evidence_vecs = embed.embed_passages(ev_docs, jd_query_path=jd_query_path)
-    return identity_vecs, evidence_vecs, role_relevances
+    ev_docs = [evidence_doc(r, kws) for r in records]
+    vecs = embed.embed_passages(id_docs + ev_docs, jd_query_path=jd_query_path)
+    return vecs[:n], vecs[n:]
 
 
 def builder(candidate: dict, fz: FrozenInputs, jd_query_path: str = "jd/jd_query.json") -> dict:
     """Per-candidate Sandbox builder: identical raw features for one candidate from frozen
-    inputs. Returns {features: FeatureRow, identity_vec, evidence_vec, role_relevances}."""
-    iv, ev, rr = embed_chunk([candidate], fz, jd_query_path)
-    row = assemble_features(candidate, iv[0], ev[0], rr[0], fz)
-    return {"features": row, "identity_vec": iv[0], "evidence_vec": ev[0], "role_relevances": rr[0]}
+    inputs. Returns {features: FeatureRow, identity_vec, evidence_vec}."""
+    iv, ev = embed_chunk([candidate], fz, jd_query_path)
+    row = assemble_features(candidate, iv[0], ev[0], fz)
+    return {"features": row, "identity_vec": iv[0], "evidence_vec": ev[0]}
 
 
 # --------------------------------------------------------------------------- #
@@ -153,7 +160,6 @@ def build_features_and_embeddings(records: Iterable[dict], fz: FrozenInputs, out
     feat_rows: list[list[float]] = []
     id_list: list[np.ndarray] = []
     ev_list: list[np.ndarray] = []
-    rr_by_row: list[list[float]] = []
 
     buf: list[dict] = []
 
@@ -161,9 +167,9 @@ def build_features_and_embeddings(records: Iterable[dict], fz: FrozenInputs, out
         nonlocal feature_names
         if not buf:
             return
-        iv, ev, rr = embed_chunk(buf, fz, jd_query_path)
+        iv, ev = embed_chunk(buf, fz, jd_query_path)
         for i, rec in enumerate(buf):
-            row = assemble_features(rec, iv[i], ev[i], rr[i], fz)
+            row = assemble_features(rec, iv[i], ev[i], fz)
             if feature_names is None:
                 feature_names = list(row.values.keys())
             elif list(row.values.keys()) != feature_names:
@@ -171,7 +177,6 @@ def build_features_and_embeddings(records: Iterable[dict], fz: FrozenInputs, out
             feat_rows.append([row.values[k] for k in feature_names])
             id_list.append(iv[i])
             ev_list.append(ev[i])
-            rr_by_row.append(rr[i])
         buf.clear()
 
     for rec in records:
@@ -184,7 +189,7 @@ def build_features_and_embeddings(records: Iterable[dict], fz: FrozenInputs, out
     np.save(out / "features.npy", feats)
     np.save(out / "embeddings_identity.npy", np.asarray(id_list, dtype=np.float32))
     np.save(out / "embeddings_evidence.npy", np.asarray(ev_list, dtype=np.float32))
-    return feature_names, feats.shape[0], rr_by_row
+    return feature_names, feats.shape[0], None
 
 
 # --------------------------------------------------------------------------- #

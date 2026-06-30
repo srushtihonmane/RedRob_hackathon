@@ -83,3 +83,8 @@ DONE (Goal 1)
 DEVIATIONS FROM PLAN (log each with one-line rationale)
 - Goal 1 D2 dictionary-encoding of low-card enums collapsed to plain UTF-8 strings: identical
   round-trip, avoids cross-batch dict-unification pitfalls in nested structs, storage trivial.
+- Goal 3 D2 per-role embeddings DROPPED; evidence-doc description ordering switched from dense
+  role-relevance to a lexical concept-hit proxy. Rationale: role_relevance (G9) is unused by
+  scoring; the evidence doc is identical for the ~95% of candidates that fit 512 tokens; cuts
+  embedding work ~3x (2 docs/candidate vs ~6). Architecture stays faithful (identity+evidence
+  two-vector). G9 columns retained, filled with the evidence_cos_ideal proxy.
