@@ -312,7 +312,7 @@
         "run on fixtures",
         "assert OR firing and per-rule evidence persisted"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F5.2",
@@ -323,7 +323,7 @@
         "assert H1=>yoe-tenure>2 etc",
         "assert empty-gap property on sample"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F5.3",
@@ -334,7 +334,7 @@
         "fire gate on all-consulting fixture",
         "assert override on product-stint fixture with suppression_evidence"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F5.4",
@@ -356,7 +356,7 @@
         "emit artifact",
         "assert alignment + manifest fields"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F6.1",
