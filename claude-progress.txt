@@ -2,7 +2,29 @@ REDROB RANKING — BUILD PROGRESS
 ================================
 (Update every session. DONE / NEXT / KEY DECISIONS / RISKS / DEVIATIONS.)
 
-CURRENT STATE: PHASE 1. ALL 8 GOALS DONE. 57/57 features pass; 85 tests green on sample.
+=========================================================================
+FINAL STATE: COMPLETE. STOP CONDITION MET.
+=========================================================================
+- 57/57 features pass; 85 tests green.
+- FULL 100k precompute done (resumable streaming/memmap build; finalized 100000 rows, F=132).
+- `python rank.py --candidates candidates.jsonl --out submission.csv` on the FULL pool:
+  "Submission is valid." in 2.08s / 601MB (<=5min, <=16GB, CPU-only, no-network, <=5GB disk).
+- Determinism: byte-identical across two full-pool runs.
+- Honeypot exposure in top-100: 0/100 (DQ threshold 10%). 0 hard-gated selected.
+- Traps: tier5 ranked up, stuffer/honeypots excluded, active>inactive (sample suite + full audit).
+- D9 tuning applied: fixed top-100 fit saturation (was 93/100 at fit=1.0 -> now spreads
+  0.70-0.99) so NDCG@10 ordering reflects fit quality, not just engagement. Top-10 are genuine
+  AI/NLP/Search engineers at product cos with cited assessment corroboration.
+- Two-command repro, sandbox (frozen-stats), Dockerfile, README, submission_metadata.yaml shipped.
+- build_manifest.json sole root; runtime_report.json; per-goal sub-manifests.
+TO PRODUCE THE SUBMISSION FROM SCRATCH:
+  python precompute.py --candidates candidates.jsonl --artifacts artifacts --expected-n 100000
+  python rank.py --candidates candidates.jsonl --out submission.csv   # then rename to <participant_id>.csv
+Before upload: fill TODO fields in submission_metadata.yaml; host the sandbox or use the
+README docker run recipe.
+=========================================================================
+
+(historical) PHASE 1. ALL 8 GOALS DONE. 57/57 features pass; 85 tests green on sample.
 rank.py: 0.13s/62MB, byte-identical, no neural model. Two-command repro proven. Sandbox +
 packaging done. Resumable streaming/memmap full-pool builder (byte-identical parity w/ in-memory).
 Full ingest validated at scale (100000 rows, 0 quarantined, 13s).
