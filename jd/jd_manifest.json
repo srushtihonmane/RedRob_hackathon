@@ -1,0 +1,31 @@
+{
+  "antiprofile_labels": [
+    "keyword_stuffer",
+    "research_only",
+    "cv_speech_robotics",
+    "consulting_only",
+    "recent_llm_only"
+  ],
+  "built_at_utc": "2026-06-30T05:31:07Z",
+  "dim": 384,
+  "embedding_backend": {
+    "library": "fastembed",
+    "note": "bge-small-en-v1.5 int8-quantized ONNX build",
+    "version": "0.8.0"
+  },
+  "git_commit": "5a135b67a5f1eae1326ece69bfeef43902b82b44",
+  "jd_antiprofile_sha256": "5501eb7957ab00c0f91aebb61005e70ac99a9107f31aefe3f905d22152b2010b",
+  "jd_ideal_sha256": "2d7f721913d9f8626dbf8076049d0ca96e0118695cd6d8a33569083f72c6e430",
+  "jd_query_sha256": "9c84880dd371e06d0f938376bc8bd936525efbd1ef1515b7410bf3c1f7940d08",
+  "model": {
+    "dim": 384,
+    "name": "BAAI/bge-small-en-v1.5",
+    "normalize": "L2",
+    "passage_prefix": "",
+    "query_prefix": "Represent this sentence for searching relevant passages: "
+  },
+  "n_antiprofiles": 5,
+  "n_criteria": 28,
+  "schema_version": 1,
+  "validation_status": "passed"
+}

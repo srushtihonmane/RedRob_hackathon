@@ -1,0 +1,329 @@
+{
+  "schema_version": 1,
+  "provenance": "Authored from job_description.docx (Senior AI Engineer — Founding Team, Redrob AI). Declarative WHAT only: criteria + evidence bindings + concept terms + narratives. No numeric weights/thresholds/formulas (those live in Goals 4/5). Human-reviewed; no build/runtime LLM dependency.",
+  "model": {
+    "name": "BAAI/bge-small-en-v1.5",
+    "dim": 384,
+    "normalize": "L2",
+    "query_prefix": "Represent this sentence for searching relevant passages: ",
+    "passage_prefix": ""
+  },
+  "criteria": [
+    {
+      "id": "production_embeddings_retrieval",
+      "criterion_type": "must_have", "polarity": "+", "importance": "critical",
+      "target_kind": "presence", "match_modes": ["semantic", "lexical", "structured"],
+      "corroboration": {"min_sources": 2},
+      "description": "Production experience with embeddings-based retrieval deployed to real users (handled drift, index refresh, retrieval-quality regression).",
+      "evidence_sources": ["profile.summary", "profile.headline", "career_history[].title", "career_history[].description", "redrob_signals.skill_assessment_scores", "skills[].name"],
+      "provenance": "JD 'Things you absolutely need': production embeddings-based retrieval."
+    },
+    {
+      "id": "vector_db_hybrid_search_ops",
+      "criterion_type": "must_have", "polarity": "+", "importance": "critical",
+      "target_kind": "presence", "match_modes": ["semantic", "lexical", "structured"],
+      "corroboration": {"min_sources": 2},
+      "description": "Production experience operating vector databases or hybrid search infrastructure (Pinecone/Weaviate/Qdrant/Milvus/OpenSearch/Elasticsearch/FAISS or similar).",
+      "evidence_sources": ["profile.summary", "career_history[].description", "redrob_signals.skill_assessment_scores", "skills[].name"],
+      "provenance": "JD 'Things you absolutely need': vector DB / hybrid search infra ops."
+    },
+    {
+      "id": "shipped_ranking_search_rec_at_scale",
+      "criterion_type": "must_have", "polarity": "+", "importance": "critical",
+      "target_kind": "presence", "match_modes": ["semantic", "lexical", "structured"],
+      "corroboration": {"min_sources": 2},
+      "description": "Shipped at least one end-to-end ranking, search, or recommendation system to real users at meaningful scale, at a product (not services) company.",
+      "evidence_sources": ["profile.summary", "profile.current_company", "career_history[].title", "career_history[].description", "career_history[].company", "career_history[].industry", "career_history[].company_size"],
+      "provenance": "JD 'How to read between the lines': shipped end-to-end ranking/search/rec at scale at a product company."
+    },
+    {
+      "id": "ranking_eval_frameworks",
+      "criterion_type": "must_have", "polarity": "+", "importance": "high",
+      "target_kind": "presence", "match_modes": ["semantic", "lexical"],
+      "corroboration": {"min_sources": 2},
+      "description": "Hands-on designing evaluation frameworks for ranking systems — NDCG, MRR, MAP, offline-to-online correlation, A/B test interpretation.",
+      "evidence_sources": ["profile.summary", "career_history[].description", "skills[].name"],
+      "provenance": "JD 'Things you absolutely need': ranking evaluation frameworks."
+    },
+    {
+      "id": "strong_python",
+      "criterion_type": "must_have", "polarity": "+", "importance": "high",
+      "target_kind": "presence", "match_modes": ["structured", "lexical"],
+      "corroboration": {"min_sources": 2},
+      "description": "Strong Python and code quality.",
+      "evidence_sources": ["redrob_signals.skill_assessment_scores", "career_history[].description", "profile.summary", "skills[].name"],
+      "provenance": "JD 'Things you absolutely need': strong Python (lean on skill_assessment_scores, not the diluted skills array)."
+    },
+
+    {
+      "id": "llm_finetuning",
+      "criterion_type": "nice_to_have", "polarity": "+", "importance": "low",
+      "target_kind": "presence", "match_modes": ["semantic", "lexical"],
+      "corroboration": {"min_sources": 1},
+      "description": "LLM fine-tuning experience (LoRA, QLoRA, PEFT).",
+      "evidence_sources": ["profile.summary", "career_history[].description", "skills[].name", "redrob_signals.skill_assessment_scores"],
+      "provenance": "JD 'Things we'd like you to have'."
+    },
+    {
+      "id": "learning_to_rank",
+      "criterion_type": "nice_to_have", "polarity": "+", "importance": "low",
+      "target_kind": "presence", "match_modes": ["semantic", "lexical"],
+      "corroboration": {"min_sources": 1},
+      "description": "Learning-to-rank models (XGBoost-based or neural).",
+      "evidence_sources": ["profile.summary", "career_history[].description", "skills[].name"],
+      "provenance": "JD 'Things we'd like you to have'."
+    },
+    {
+      "id": "hr_tech_marketplace",
+      "criterion_type": "nice_to_have", "polarity": "+", "importance": "low",
+      "target_kind": "presence", "match_modes": ["semantic", "structured"],
+      "corroboration": {"min_sources": 1},
+      "description": "Prior exposure to HR-tech, recruiting tech, or marketplace products.",
+      "evidence_sources": ["profile.current_industry", "career_history[].industry", "career_history[].description", "profile.summary"],
+      "provenance": "JD 'Things we'd like you to have'."
+    },
+    {
+      "id": "distributed_systems_scale",
+      "criterion_type": "nice_to_have", "polarity": "+", "importance": "low",
+      "target_kind": "presence", "match_modes": ["semantic", "lexical"],
+      "corroboration": {"min_sources": 1},
+      "description": "Distributed systems or large-scale inference optimization background.",
+      "evidence_sources": ["profile.summary", "career_history[].description", "skills[].name"],
+      "provenance": "JD 'Things we'd like you to have'."
+    },
+    {
+      "id": "open_source_contributions",
+      "criterion_type": "nice_to_have", "polarity": "+", "importance": "low",
+      "target_kind": "presence", "match_modes": ["semantic", "signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Open-source contributions in the AI/ML space.",
+      "evidence_sources": ["profile.summary", "career_history[].description", "redrob_signals.github_activity_score"],
+      "provenance": "JD 'Things we'd like you to have' + external-validation signal."
+    },
+
+    {
+      "id": "profile_internally_consistent",
+      "criterion_type": "hard_gate", "polarity": "-", "importance": "critical",
+      "target_kind": "gate", "match_modes": ["structured"],
+      "corroboration": {"min_sources": 1},
+      "description": "Profile must be internally consistent (no logically impossible tenure/experience/skill claims).",
+      "evidence_sources": ["profile.years_of_experience", "career_history[].duration_months", "career_history[].start_date", "career_history[].end_date", "skills[].proficiency", "skills[].duration_months"],
+      "provenance": "Honeypot umbrella; exact detection deferred to Goal 5 (H1/H2/H3)."
+    },
+    {
+      "id": "pure_research_no_production",
+      "criterion_type": "hard_gate", "polarity": "-", "importance": "critical",
+      "target_kind": "gate", "match_modes": ["semantic", "structured"],
+      "corroboration": {"min_sources": 1},
+      "description": "Career entirely in pure research environments (academic/research-only roles) with no production deployment.",
+      "evidence_sources": ["career_history[].title", "career_history[].description", "career_history[].industry", "profile.summary"],
+      "provenance": "JD disqualifier 'pure research... without any production — we will not move forward.' (Goal 5 demotes to soft: not deterministically detectable in this pool.)"
+    },
+    {
+      "id": "consulting_entire_career",
+      "criterion_type": "hard_gate", "polarity": "-", "importance": "critical",
+      "target_kind": "gate", "match_modes": ["structured"],
+      "corroboration": {"min_sources": 1},
+      "override_condition": "any_product_stint",
+      "description": "Entire career at consulting/services firms (TCS, Infosys, Wipro, Accenture, Cognizant, Capgemini, etc.) with no product-company experience.",
+      "evidence_sources": ["career_history[].company", "career_history[].industry", "profile.current_company"],
+      "provenance": "JD disqualifier 'only worked at consulting firms... entire career.' Override: 'if you have prior product-company experience, that's fine.'"
+    },
+    {
+      "id": "recent_llm_only_no_preml",
+      "criterion_type": "strong_negative", "polarity": "-", "importance": "high",
+      "target_kind": "gate", "match_modes": ["semantic", "lexical", "structured"],
+      "corroboration": {"min_sources": 1},
+      "override_condition": "substantial_pre_llm_ml_production",
+      "description": "AI experience consists primarily of recent (<12 mo) LangChain/OpenAI-style projects with no pre-LLM ML production.",
+      "evidence_sources": ["profile.summary", "career_history[].description", "career_history[].duration_months", "skills[].name"],
+      "provenance": "JD 'probably not... unless you can demonstrate substantial pre-LLM-era ML production experience.'"
+    },
+    {
+      "id": "senior_not_coding_18mo",
+      "criterion_type": "strong_negative", "polarity": "-", "importance": "high",
+      "target_kind": "gate", "match_modes": ["semantic", "structured"],
+      "corroboration": {"min_sources": 1},
+      "description": "Senior engineer who hasn't written production code in 18+ months (moved to 'architecture'/'tech lead').",
+      "evidence_sources": ["profile.current_title", "career_history[].title", "career_history[].description"],
+      "provenance": "JD 'probably not... this role writes code.'"
+    },
+    {
+      "id": "title_chaser_1p5yr_hops",
+      "criterion_type": "strong_negative", "polarity": "-", "importance": "high",
+      "target_kind": "gate", "match_modes": ["structured"],
+      "corroboration": {"min_sources": 1},
+      "description": "Title-chaser: ~1.5-year company hops optimizing for Senior->Staff->Principal titles.",
+      "evidence_sources": ["career_history[].title", "career_history[].duration_months", "career_history[].start_date", "career_history[].end_date"],
+      "provenance": "JD 'Title-chasers... switching companies every 1.5 years... not a fit.' (tenure/hop-based, data lacks title escalation.)"
+    },
+    {
+      "id": "cv_speech_robotics_no_nlp",
+      "criterion_type": "strong_negative", "polarity": "-", "importance": "high",
+      "target_kind": "gate", "match_modes": ["semantic", "structured"],
+      "corroboration": {"min_sources": 1},
+      "description": "Primary expertise in computer vision, speech, or robotics without significant NLP/IR exposure.",
+      "evidence_sources": ["profile.summary", "profile.current_title", "career_history[].description", "redrob_signals.skill_assessment_scores", "skills[].name"],
+      "provenance": "JD 'primary expertise is computer vision, speech, or robotics without significant NLP/IR.'"
+    },
+    {
+      "id": "closedsource_5yr_no_external_validation",
+      "criterion_type": "strong_negative", "polarity": "-", "importance": "medium",
+      "target_kind": "gate", "match_modes": ["semantic", "signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Entirely closed-source proprietary work for 5+ years with no external validation (papers, talks, open-source).",
+      "evidence_sources": ["profile.summary", "career_history[].description", "redrob_signals.github_activity_score"],
+      "provenance": "JD 'entirely on closed-source... for 5+ years without external validation.'"
+    },
+
+    {
+      "id": "experience_band",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "medium",
+      "target_kind": "range", "match_modes": ["structured"],
+      "corroboration": {"min_sources": 1},
+      "description": "Total experience 5-9 years (soft band; 6-8 ideal). Not a gate.",
+      "evidence_sources": ["profile.years_of_experience"],
+      "provenance": "JD 'Experience Required: 5-9 years (a range, not a requirement).'"
+    },
+    {
+      "id": "applied_ml_years_at_product",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "high",
+      "target_kind": "range", "match_modes": ["structured", "semantic"],
+      "corroboration": {"min_sources": 1},
+      "description": "Years in applied ML/AI roles at product companies (ideal 4-5).",
+      "evidence_sources": ["career_history[].title", "career_history[].description", "career_history[].company", "career_history[].industry", "career_history[].duration_months"],
+      "provenance": "JD ideal: '4-5 years in applied ML/AI at product companies (not pure services).'"
+    },
+    {
+      "id": "location_noida_pune_relocate",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "low",
+      "target_kind": "modifier", "match_modes": ["structured", "signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Located in or willing to relocate to Noida/Pune (or a Tier-1 Indian city).",
+      "evidence_sources": ["profile.location", "profile.country", "redrob_signals.willing_to_relocate"],
+      "provenance": "JD 'Located in or willing to relocate to Noida or Pune.'"
+    },
+    {
+      "id": "notice_period",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "low",
+      "target_kind": "modifier", "match_modes": ["signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Notice period <=30 days ideal; 30+ in scope but bar rises.",
+      "evidence_sources": ["redrob_signals.notice_period_days"],
+      "provenance": "JD 'We'd love sub-30-day notice... 30+ day notice candidates are still in scope.'"
+    },
+
+    {
+      "id": "avail_open_to_work",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "medium",
+      "target_kind": "modifier", "match_modes": ["signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Open to work / clear signal of being in the job market.",
+      "evidence_sources": ["redrob_signals.open_to_work_flag"],
+      "provenance": "JD 'Active on Redrob platform... so we can actually talk to them.'"
+    },
+    {
+      "id": "avail_last_active_recency",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "medium",
+      "target_kind": "modifier", "match_modes": ["signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Recently active on the platform (recency is relative across the pool).",
+      "evidence_sources": ["redrob_signals.last_active_date"],
+      "provenance": "JD hackathon note: down-weight a candidate who hasn't logged in for 6 months."
+    },
+    {
+      "id": "avail_recruiter_response_rate",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "medium",
+      "target_kind": "modifier", "match_modes": ["signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Responsive to recruiters (high recruiter response rate, low avg response time).",
+      "evidence_sources": ["redrob_signals.recruiter_response_rate", "redrob_signals.avg_response_time_hours"],
+      "provenance": "JD hackathon note: a 5% recruiter response rate is effectively unavailable."
+    },
+    {
+      "id": "avail_saved_by_recruiters",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "low",
+      "target_kind": "modifier", "match_modes": ["signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Market demand: saved by recruiters recently.",
+      "evidence_sources": ["redrob_signals.saved_by_recruiters_30d"],
+      "provenance": "Engagement/market-demand signal (cautious, low weight)."
+    },
+    {
+      "id": "avail_interview_completion",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "low",
+      "target_kind": "modifier", "match_modes": ["signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Completes scheduled interviews (reliability/availability).",
+      "evidence_sources": ["redrob_signals.interview_completion_rate"],
+      "provenance": "Engagement/reliability signal."
+    },
+    {
+      "id": "credibility_verifications",
+      "criterion_type": "context_modifier", "polarity": "+", "importance": "low",
+      "target_kind": "modifier", "match_modes": ["signal"],
+      "corroboration": {"min_sources": 1},
+      "description": "Identity/credibility verifications present (email, phone, LinkedIn).",
+      "evidence_sources": ["redrob_signals.verified_email", "redrob_signals.verified_phone", "redrob_signals.linkedin_connected"],
+      "provenance": "Credibility nudge (split out from engagement per Goal 4 D6.5)."
+    }
+  ],
+
+  "lexical_concept_groups": {
+    "retrieval_embeddings": {
+      "terms": ["embeddings", "embedding", "dense retrieval", "semantic search", "sentence transformers", "bge", "e5", "retrieval", "nearest neighbor", "ann", "similarity search"],
+      "synonyms": ["sentence-transformers", "vector embeddings", "dense vectors", "knn", "approximate nearest neighbor"]
+    },
+    "vector_db": {
+      "terms": ["vector database", "vector db", "pinecone", "weaviate", "qdrant", "milvus", "opensearch", "elasticsearch", "faiss", "hybrid search"],
+      "synonyms": ["vectordb", "vector store", "elastic search", "hybrid retrieval"]
+    },
+    "ranking_eval": {
+      "terms": ["ranking", "learning to rank", "ndcg", "mrr", "map", "ranking evaluation", "offline evaluation", "a/b test", "relevance", "recommendation", "recommender", "search relevance"],
+      "synonyms": ["recsys", "rec-sys", "recommendation system", "recommender system", "ab test", "mean reciprocal rank", "mean average precision", "offline to online"]
+    },
+    "llm_finetune": {
+      "terms": ["fine-tuning", "fine tuning", "lora", "qlora", "peft", "instruction tuning", "rlhf"],
+      "synonyms": ["finetune", "fine-tune", "parameter efficient fine tuning"]
+    },
+    "learning_to_rank": {
+      "terms": ["learning to rank", "lambdamart", "xgboost ranking", "gradient boosted trees", "ltr"],
+      "synonyms": ["pairwise ranking", "listwise ranking"]
+    },
+    "strong_python": {
+      "terms": ["python", "pytorch", "numpy", "pandas", "scipy"],
+      "synonyms": []
+    },
+    "distributed_systems": {
+      "terms": ["distributed systems", "spark", "kafka", "scale", "inference optimization", "low latency", "throughput"],
+      "synonyms": ["large scale", "high throughput", "distributed"]
+    },
+    "cv_speech": {
+      "terms": ["computer vision", "image", "object detection", "segmentation", "yolo", "opencv", "speech recognition", "asr", "tts", "robotics", "perception"],
+      "synonyms": ["cv", "image classification", "speech to text", "text to speech"]
+    },
+    "nlp_ir": {
+      "terms": ["nlp", "natural language processing", "information retrieval", "ir", "text", "language model", "question answering", "rag"],
+      "synonyms": ["natural language", "retrieval augmented generation"]
+    }
+  },
+
+  "ideal_narrative": "Senior applied ML engineer with about seven years of experience, four to five of them building machine learning systems at product companies rather than services firms. I shipped an end-to-end search and recommendation ranking system to real users at scale: I built the embeddings-based retrieval layer, ran the vector index and hybrid search infrastructure in production, and owned how we measured ranking quality. I handled embedding drift, index refresh, and retrieval-quality regressions. I designed the evaluation framework end to end, tracking NDCG, MRR and MAP offline and correlating them with online A/B engagement. Strong Python and code quality. I have opinions about hybrid versus dense retrieval, offline versus online evaluation, and when to fine-tune versus prompt an LLM, grounded in systems I actually built and operated.",
+  "ideal_narrative_paraphrases": [
+    "Product-company machine learning engineer who built and operated a candidate and content ranking, search, and recommendation system used by millions. Owned the dense embedding retrieval, the vector search index, hybrid retrieval, and the offline-to-online evaluation loop. Comfortable shipping a working ranker fast and then improving it with rigorous offline metrics and A/B testing. Deep on retrieval and ranking from before it was fashionable; strong Python.",
+    "Engineer who owns the intelligence layer of a product: the retrieval, ranking, and matching that decide what users see. Built embeddings retrieval deployed to real users, ran a vector database and hybrid search in production, designed NDCG/MRR/MAP evaluation with offline-online correlation, and tuned relevance from real recruiter and user feedback. Six to eight years, mostly at product companies, scrappy and product-minded."
+  ],
+
+  "antiprofiles": [
+    {"label": "keyword_stuffer", "narrative": "Profile lists every trending AI and machine learning keyword as a skill — RAG, Pinecone, FAISS, embeddings, LLMs, vector search, transformers, recommendation systems — but the job title and actual work are unrelated, for example human resources, marketing, content writing, or operations. The career history and assessments show no evidence of ever building retrieval, ranking, or search systems."},
+    {"label": "research_only", "narrative": "Career entirely in academic and research-only roles — PhD researcher, research scientist, postdoc, lab affiliate — publishing papers and prototypes with no production deployment, no real users, and no experience shipping or operating a system in production."},
+    {"label": "cv_speech_robotics", "narrative": "Specialist in computer vision, speech, or robotics: object detection, image segmentation, YOLO, OpenCV, speech recognition, text to speech, perception and autonomy. No meaningful natural language processing or information retrieval, ranking, or search experience."},
+    {"label": "consulting_only", "narrative": "Entire career spent at IT services and consulting firms such as TCS, Infosys, Wipro, Accenture, Cognizant, and Capgemini, delivering client projects and staffing engagements, with no experience at a product company building and owning a product used by real users."},
+    {"label": "recent_llm_only", "narrative": "Recent graduate-style AI experience consisting only of the last year of LangChain tutorials and OpenAI API calls wired into demo chatbots, with no earlier machine learning production experience and no understanding of retrieval, ranking, or evaluation before large language models became popular."}
+  ],
+  "antiprofile_labels": ["keyword_stuffer", "research_only", "cv_speech_robotics", "consulting_only", "recent_llm_only"],
+
+  "divergence_inputs": {
+    "stuffer": {"positive": "lexical_concept_score", "negative": "dense_cosine_ideal", "definition": "lexical_concept_score - dense_cosine(ideal): high when a profile keyword-matches concepts but its narrative does not resemble a real practitioner."}
+  }
+}

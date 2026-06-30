@@ -9,11 +9,11 @@ joblib==1.5.1
 PyYAML==6.0.3
 
 # Embedding backend for bge-small-en-v1.5 (384-d, L2-norm, query/passage prefix).
-# Backend selected in src/embed.py: a lean ONNX path (fastembed) is preferred for low
-# memory; sentence-transformers+torch is the fallback. The chosen library + exact version
-# is pinned here once verified to install and reproduce the prefix convention.
-# (Finalized during Goal 2/3 build — see claude-progress.txt.)
-# fastembed==<pinned>
-# --- OR ---
-# sentence-transformers==<pinned>
-# torch==2.9.1
+# Selected: fastembed (ONNX Runtime, CPU, no torch at inference) — lean + low-memory +
+# deterministic (verified 0.0 re-embed diff, single-thread). Uses the int8-quantized ONNX
+# build of bge-small-en-v1.5 (still 384-d/L2-norm; quantization is immaterial for ranking).
+# Used ONLY in precompute/sandbox; rank.py never imports it (Runtime ML Policy).
+fastembed==0.8.0
+onnxruntime==1.23.2
+hf_xet==1.5.1
+huggingface_hub==0.36.2

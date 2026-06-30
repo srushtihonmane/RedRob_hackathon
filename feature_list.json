@@ -80,7 +80,7 @@
         "author from job_description.docx",
         "assert 5 must-haves, nice-to-haves, disqualifiers incl consulting hard gate, modifiers, atomic engagement signals"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F2.2",
@@ -91,7 +91,7 @@
         "embed ideal narrative",
         "assert shape and unit norm"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F2.3",
@@ -102,7 +102,7 @@
         "embed each archetype narrative",
         "assert row order matches jd_query labels"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F2.4",
@@ -113,7 +113,7 @@
         "run validator",
         "assert every evidence path resolves in candidate_schema.json"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F2.5",
@@ -124,7 +124,7 @@
         "emit manifest",
         "assert fields + hashes"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F3.1",
