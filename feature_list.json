@@ -367,7 +367,7 @@
         "derive eligibility",
         "assert selection restricted to eligible subset"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F6.2",
@@ -378,7 +378,7 @@
         "assert printed strictly decreasing with rank",
         "assert equal-score rows ordered candidate_id ascending"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F6.3",
@@ -389,7 +389,7 @@
         "assert zero detected honeypots in top-100",
         "assert exposure margin"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F6.4",
@@ -400,7 +400,7 @@
         "write CSV",
         "run validate_submission.py and assert 'Submission is valid.'"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F6.5",
@@ -411,7 +411,7 @@
         "assert exactly 100 rows even when relevant < 100",
         "assert fillers flagged"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F6.6",
@@ -422,7 +422,7 @@
         "emit manifest",
         "assert fields"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F6.7",
@@ -433,7 +433,7 @@
         "run suite on final dataframe",
         "assert all 11 checks pass"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "F7.1",
@@ -597,7 +597,7 @@
         "insert stuffer fixture into sample",
         "assert it does not enter top-10/top-100"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FT.2",
@@ -608,7 +608,7 @@
         "insert Tier-5 fixture",
         "assert it ranks into the relevant tier"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FT.3",
@@ -619,7 +619,7 @@
         "insert one fixture per archetype",
         "assert all excluded"
       ],
-      "passes": false
+      "passes": true
     },
     {
       "id": "FT.4",
@@ -630,7 +630,7 @@
         "pair active vs inactive equivalents",
         "assert active ranks above inactive"
       ],
-      "passes": false
+      "passes": true
     }
   ]
 }

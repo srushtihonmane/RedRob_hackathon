@@ -2,7 +2,15 @@ REDROB RANKING — BUILD PROGRESS
 ================================
 (Update every session. DONE / NEXT / KEY DECISIONS / RISKS / DEVIATIONS.)
 
-CURRENT STATE: PHASE 1. Goals 1-3 DONE + verified on sample. Next: Goal 4 scoring (4A-4E).
+CURRENT STATE: PHASE 1. Goals 1-6 DONE. END-TO-END SUBMISSION VALID on sample
+(validate_submission.py: "Submission is valid."). Next: Goal 7 reasoning (replace placeholder),
+then Goal 8 runtime/repro/packaging, then D9 tuning + full 100k run.
+
+MILESTONE: src/select.py produces submission.csv passing the official validator. 100 rows,
+0 honeypots in top-100, tier5 IN / stuffer OUT, scores non-increasing, candidate_id tie-break.
+41/57 features pass; 70 tests green. Placeholder reasoning in use (Goal 7 replaces).
+TODO cosmetic: snippet anchor prints float32 yoe (6.300000190734...) -> fix in snippets.py +
+clean number formatting in Goal 7; will rebuild artifacts once (after embedding-throughput fix).
 
 DONE (Goal 2) - jd/jd_query.json (28 typed criteria), jd_ideal.npy, jd_antiprofile.npy [5],
   jd_manifest. src/jd_build.py (validation: evidence paths resolve, enums, unique ids).
