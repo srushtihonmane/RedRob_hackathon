@@ -1,12 +1,12 @@
 # Redrob Hackathon — Submission Metadata
 # Fill the TODO personal fields before uploading; everything else reflects this repo.
 
-team_name: "TODO-your-team-name"
+team_name: "Cache_Me_If_You_Can"
 
 primary_contact:
   name: "Srushti Honmane"
   email: "24B2462@iitb.ac.in"
-  phone: "TODO +91-XXXXXXXXXX"
+  phone: "+91-7083244228"
 
 team_members:
   - name: "Srushti Honmane"
@@ -17,7 +17,7 @@ team_members:
 # Code and reproducibility
 # ============================================================================
 github_repo: "https://github.com/srushtihonmane/RedRob_hackathon"
-sandbox_link: "TODO hosted sandbox URL — or use the docker run recipe in README.md"
+sandbox_link: "Self-contained docker run recipe: https://github.com/srushtihonmane/RedRob_hackathon#sandbox--demo-105 (per spec 10.5 fallback; Dockerfile.runtime builds and runs unmodified)"
 reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 
 compute:
