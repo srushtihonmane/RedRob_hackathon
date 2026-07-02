@@ -4,13 +4,16 @@
 team_name: "Cache_Me_If_You_Can"
 
 primary_contact:
-  name: "Srushti Honmane"
-  email: "24B2462@iitb.ac.in"
+  name: "Eashan Madnani"
+  email: "24b2447@iitb.ac.in"
   phone: "+91-7083244228"
 
 team_members:
   - name: "Srushti Honmane"
     email: "24B2462@iitb.ac.in"
+    role: "ML Engineer"
+  - name: "Eashan Madnani"
+    email: "24b2447@iitb.ac.in"
     role: "ML Engineer"
 
 # ============================================================================
@@ -38,9 +41,16 @@ ai_tools_used:
   - "Claude"
 
 ai_usage_summary: |
-  Claude (Claude Code) was used as a pair-engineer for implementation, test authoring, and
-  code review against a human-authored architecture spec (the Architecture/ folder). No
-  candidate data was sent to any hosted LLM. The ranking step calls no LLM/network at all.
+  Claude was used extensively and is declared transparently. (1) Design: the system
+  architecture — goal decomposition, data contracts, trap/honeypot strategy, runtime
+  boundary — was developed through iterative human-AI brainstorming sessions and then
+  reviewed and locked by the team as a written spec. (2) Implementation: Claude Code built
+  the codebase from that spec feature-by-feature, with the team directing build order,
+  compute strategy, and tuning decisions, and every stage verified against automated tests
+  and the official validator. (3) During development, Claude Code locally read and profiled
+  excerpts of the released candidate dataset (e.g. schema checks, distribution stats,
+  debugging). The submitted ranking system itself contains NO LLM component: the ranking
+  step loads precomputed artifacts and makes no model, LLM, or network calls of any kind.
 
 # ============================================================================
 # Approach summary
