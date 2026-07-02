@@ -4,19 +4,19 @@
 team_name: "TODO-your-team-name"
 
 primary_contact:
-  name: "TODO Full Name"
-  email: "24B2447@iitb.ac.in"
+  name: "Srushti Honmane"
+  email: "24B2462@iitb.ac.in"
   phone: "TODO +91-XXXXXXXXXX"
 
 team_members:
-  - name: "TODO Member 1"
-    email: "24B2447@iitb.ac.in"
+  - name: "Srushti Honmane"
+    email: "24B2462@iitb.ac.in"
     role: "ML Engineer"
 
 # ============================================================================
 # Code and reproducibility
 # ============================================================================
-github_repo: "TODO https://github.com/YOUR_USERNAME/YOUR_REPO"
+github_repo: "https://github.com/srushtihonmane/RedRob_hackathon"
 sandbox_link: "TODO hosted sandbox URL — or use the docker run recipe in README.md"
 reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 

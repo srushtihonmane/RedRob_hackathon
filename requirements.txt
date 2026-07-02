@@ -1,0 +1,5 @@
+# Convenience superset — installs everything (precompute + ranking step).
+# The two pinned sets it composes:
+#   requirements.runtime.txt     — lean deps for the BUDGETED ranking step (rank.py)
+#   requirements.precompute.txt  — + embedding stack for the offline phase (precompute.py)
+-r requirements.precompute.txt
