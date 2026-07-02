@@ -28,6 +28,17 @@ LEAD_VARIANTS = ["{t}, {y} yrs at {c}", "{t} ({y} yrs, {c})", "{t} at {c}, {y} y
 MAX_LEN = 240
 
 
+def _short_label(desc: str, limit: int = 40) -> str:
+    """Shorten a criterion description at a WORD boundary (no mid-word cuts)."""
+    desc = (desc or "").rstrip(".")
+    if len(desc) <= limit:
+        return desc
+    cut = desc[:limit]
+    if " " in cut:
+        cut = cut.rsplit(" ", 1)[0]
+    return cut.rstrip(",;: ")
+
+
 def _snip_for_concept(snippets, concept):
     verified = [s for s in snippets if s.get("concept") == concept and s["source_tier"] == "verified"]
     demo = [s for s in snippets if s.get("concept") == concept and s["source_tier"] == "demonstrated"]
@@ -55,7 +66,8 @@ def build_reasoner(bundle, res, cfg):
             concept = (CRITERION_CONCEPTS.get(cid) or [None])[0]
             snip = _snip_for_concept(snippets, concept) if concept else None
             cand.append({"cid": cid, "sat": sat, "contribution": w * sat, "concept": concept,
-                         "snip": snip, "jd": CONCEPT_PHRASE.get(concept, crit_by_id[cid]["description"][:40])})
+                         "snip": snip,
+                         "jd": CONCEPT_PHRASE.get(concept) or _short_label(crit_by_id[cid]["description"])})
         cand.sort(key=lambda d: -d["contribution"])
         strengths = cand[:2]
         # concern ladder (deterministic, first applicable)
