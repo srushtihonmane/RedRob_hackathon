@@ -20,7 +20,7 @@ team_members:
 # Code and reproducibility
 # ============================================================================
 github_repo: "https://github.com/srushtihonmane/RedRob_hackathon"
-sandbox_link: "Self-contained docker run recipe: https://github.com/srushtihonmane/RedRob_hackathon#sandbox--demo-105 (per spec 10.5 fallback; Dockerfile.runtime builds and runs unmodified)"
+sandbox_link: "https://colab.research.google.com/github/srushtihonmane/RedRob_hackathon/blob/master/sandbox_colab.ipynb"
 reproduce_command: "python rank.py --candidates ./candidates.jsonl --out ./submission.csv"
 
 compute:

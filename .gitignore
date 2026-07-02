@@ -53,7 +53,6 @@ Thumbs.db
 /sub*.csv
 /x.csv
 data/sample/tiny*.jsonl
-data/sample/sample100.jsonl
 data/sample/tiny_art/
 
 # Runtime scratch

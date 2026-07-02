@@ -31,11 +31,18 @@ Python 3.10. The ranking step uses only numpy/scipy/pyarrow/pandas/joblib.
 
 ## Sandbox / demo (§10.5)
 
-Rank a ≤100-candidate sample end-to-end (builds features on the fly, applies the **shipped frozen
-pool statistics** — proving the transforms are pool-frozen):
+**Hosted sandbox (Google Colab — run all cells, ~2–3 min on free CPU):**
+https://colab.research.google.com/github/srushtihonmane/RedRob_hackathon/blob/master/sandbox_colab.ipynb
+
+It ranks a ≤100-candidate sample end-to-end (pre-loaded `data/sample/sample100.jsonl`, or upload
+your own): builds the sample's features/embeddings on the fly, then applies the **shipped frozen
+full-pool statistics** in `frozen_stats/` (never recomputed — proving the transforms are
+pool-frozen), and produces a ranked CSV with per-candidate reasoning.
+
+Same thing locally:
 
 ```bash
-python sandbox_rank.py --sample your_sample.jsonl --artifacts ./artifacts --out ranked.csv
+python sandbox_rank.py --sample data/sample/sample100.jsonl --artifacts frozen_stats --out ranked.csv
 ```
 
 A self-contained Docker recipe (the canonical Stage-3 image) is in `Dockerfile.runtime`:

@@ -1,0 +1,29 @@
+{
+  "F": 132,
+  "bm25": {
+    "avgdl": 279.9926452636719,
+    "n_docs": 100000,
+    "n_terms": 1226
+  },
+  "embeddings_evidence_sha256": "1a83f84269abfda37db299d397eefb348eb359272d24a751c246d4eba6c20452",
+  "embeddings_identity_sha256": "97c649ac6bd0bd8b02003340a71d6959c41234f04a8bbdf25340718a08b7bf22",
+  "feature_manifest_sha256": "922c0216f78c952bc741cff24a79e0776a0307bb4446cca81502f81a67a8efd5",
+  "features_sha256": "a783abf7e6f38417b34ee8b0614ad9959995e47a372be9af059585fdf8eac09d",
+  "git_commit": "b5f2d5e08a8e1fa980fb67d18fea7f15c1e5a854",
+  "model": {
+    "dim": 384,
+    "name": "BAAI/bge-small-en-v1.5",
+    "normalize": "L2",
+    "passage_prefix": "",
+    "query_prefix": "Represent this sentence for searching relevant passages: "
+  },
+  "n_rows": 100000,
+  "normalization_stats_sha256": "947e30baaee56c1665fbdf77d544428e8f858eb961849c0579956ef4a02557c2",
+  "ref_date": "2026-05-28",
+  "schema_version": 1,
+  "snippets": {
+    "bytes": 80922261,
+    "n_rows": 100000
+  },
+  "streaming": true
+}
